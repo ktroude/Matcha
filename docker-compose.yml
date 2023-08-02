@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  db:
+    image: 'mysql:latest'
+    env_file:
+      - .env
+    ports:
+      - 3306:3306
+    networks:
+      - matcha
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "nest_user", "-pnest_password"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+  backend:
+    build:
+      context: ./
+      dockerfile: ./backend/Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - matcha
+    volumes:
+      - ./backend:/app
+  frontend:
+    build:
+      context: ./
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - 5173:5173
+    networks:
+      - matcha
+    volumes:
+      - ./frontend:/app
+networks:
+  matcha:
