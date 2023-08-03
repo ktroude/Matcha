@@ -31,7 +31,7 @@ services:
       context: ./
       dockerfile: ./frontend/Dockerfile
     ports:
-      - 5173:5173
+      - 8080:8080
     networks:
       - matcha
     volumes:
