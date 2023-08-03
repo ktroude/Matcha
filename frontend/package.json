@@ -21,4 +21,8 @@
   "dependencies": {
     "sirv-cli": "^2.0.0"
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 9c87faf412d0d86cff099b29826cee43aaee08db
