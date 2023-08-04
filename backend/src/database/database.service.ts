@@ -17,6 +17,7 @@ export class DatabaseService {
     await this.createInteractionTable();
     await this.createPictureTable();
     await this.createSearchParamTable();
+    await this.createImposteur();
   }
 
   private async connectToDatabase() {
@@ -56,7 +57,7 @@ export class DatabaseService {
 
   private async createInterestTable() {
     const createTableQuery = `
-CREATE TABLE Interest (
+CREATE TABLE IF NOT EXISTS Interest (
     id   INT PRIMARY KEY AUTO_INCREMENT,
     tag  VARCHAR(255)
 );
@@ -64,15 +65,15 @@ CREATE TABLE Interest (
 
     try {
       await this.connection.query(createTableQuery);
-      console.log("Table User créée avec succès !");
+      console.log("Table Interest créée avec succès !");
     } catch (err) {
-      console.error('Erreur lors de la création de la table User : ', err);
+      console.error('Erreur lors de la création de la table Interest : ', err);
     }
   }
 
   private async createUserInterestTable() {
     const createTableQuery = `
-CREATE TABLE UserInterest (
+CREATE TABLE IF NOT EXISTS UserInterest (
     userId      INT,
     interestId  INT,
     PRIMARY KEY (userId, interestId),
@@ -83,16 +84,16 @@ CREATE TABLE UserInterest (
 
     try {
       await this.connection.query(createTableQuery);
-      console.log("Table User créée avec succès !");
+      console.log("Table UserInterest créée avec succès !");
     } catch (err) {
-      console.error('Erreur lors de la création de la table User : ', err);
+      console.error('Erreur lors de la création de la table UserInterest : ', err);
     }
   }
 
 
   private async createInteractionTable() {
     const createTableQuery = `
-CREATE TABLE Interaction (
+CREATE TABLE IF NOT EXISTS Interaction (
     id            INT PRIMARY KEY AUTO_INCREMENT,
     viewerUserId  INT,
     viewedUserId  INT,
@@ -103,9 +104,9 @@ CREATE TABLE Interaction (
 
     try {
       await this.connection.query(createTableQuery);
-      console.log("Table User créée avec succès !");
+      console.log("Table Interaction créée avec succès !");
     } catch (err) {
-      console.error('Erreur lors de la création de la table User : ', err);
+      console.error('Erreur lors de la création de la table Interaction : ', err);
     }
   }
 
@@ -113,7 +114,7 @@ CREATE TABLE Interaction (
 
   private async createPictureTable() {
     const createTableQuery = `
-CREATE TABLE Picture (
+CREATE TABLE IF NOT EXISTS Picture (
     id               INT PRIMARY KEY AUTO_INCREMENT,
     userId           INT,
     url              VARCHAR(255),
@@ -124,16 +125,16 @@ CREATE TABLE Picture (
 
     try {
       await this.connection.query(createTableQuery);
-      console.log("Table User créée avec succès !");
+      console.log("Table Picture créée avec succès !");
     } catch (err) {
-      console.error('Erreur lors de la création de la table User : ', err);
+      console.error('Erreur lors de la création de la table Picture : ', err);
     }
   }
 
 
   private async createSearchParamTable() {
     const createTableQuery = `
-CREATE TABLE SearchParam (
+CREATE TABLE IF NOT EXISTS SearchParam (
     id           INT PRIMARY KEY AUTO_INCREMENT,
     position     VARCHAR(255),
     distanceMax  INT,
@@ -145,9 +146,9 @@ CREATE TABLE SearchParam (
 
     try {
       await this.connection.query(createTableQuery);
-      console.log("Table User créée avec succès !");
+      console.log("Table SearchParam créée avec succès !");
     } catch (err) {
-      console.error('Erreur lors de la création de la table User : ', err);
+      console.error('Erreur lors de la création de la table SearchParam : ', err);
     }
   }
 
@@ -173,6 +174,18 @@ CREATE TABLE SearchParam (
 
 
 
+async createImposteur() {
+      const insertDataQuery = `
+      INSERT INTO User (firstName, lastName, email, username, password, registered, gender, sexualPref, biography, fameRating)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+  try {
+      await this.connection.query(insertDataQuery, ['Clara', 'Morgan', 'coucoulesloulou@gmail.com', 'Roger', 'cbebckz:', true, 'Les 2', JSON.stringify(["j'aime tout miam"]) , 'ceci est une bio', 50000]);
+      console.log('Données insérées avec succès !');
+    } catch (err) {
+      console.error("Erreur lors de l'insertion des données :", err);
+    }
+}
 
 
   async insertData(nom: string, age: number) {
