@@ -4,6 +4,7 @@
 </main>
 
 <script lang="ts">
+	// import { LOCALHOST } from "../../../.env";
 	async function createUser() {
 		const response = await fetch(`http://localhost:3000/user/createUser`, {
 			method: 'POST',
