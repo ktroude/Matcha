@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
-import { UserTableService } from './UserTable.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class DatabaseService {
   private connection: mysql.Connection;
 
-  constructor(private user:UserTableService) {
+  constructor(private user:UserService) {
     this.initializeDatabase(); // Pour établir la connexion lors de la creation du back
   }
   

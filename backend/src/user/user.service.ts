@@ -4,7 +4,7 @@ import { ValidationService } from 'src/validation/validation.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class UserTableService {
+export class UserService {
   private connection: mysql.Connection;
 
   constructor(private validation: ValidationService) {
@@ -37,7 +37,7 @@ export class UserTableService {
       this.validation.name(username) > 0 ||
       this.validation.password(password) > 0
     )
-      console.log('erreur lors de la validation');
+      return 1;
 
     const cryptedPassword: string = bcrypt.hashSync(password, 16);
     const insertDataQuery = `
