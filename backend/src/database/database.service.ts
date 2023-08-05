@@ -41,7 +41,7 @@ export class DatabaseService {
     email       VARCHAR(255) NOT NULL,
     username    VARCHAR(55) NOT NULL,
     password    VARCHAR(255) NOT NULL,
-    registered  BOOLEAN,
+    registered  BOOLEAN DEFAULT FALSE,
     gender      VARCHAR(10),
     sexualPref  JSON,
     biography   TEXT,
