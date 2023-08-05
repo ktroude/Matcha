@@ -31,7 +31,7 @@ export class ValidationService {
   gender(gender: string): number {
     gender = gender.toUpperCase();
     if (gender.length < 1 || gender.length > 3) return 1;
-    if (gender != 'F' && gender != 'H' && gender != 'O') return 2;
+    if (gender != 'F' && gender != 'M' && gender != 'O') return 2;
     return 0;
   }
 

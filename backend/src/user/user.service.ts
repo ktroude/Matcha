@@ -36,8 +36,10 @@ export class UserService {
       this.validation.email(email) > 0 ||
       this.validation.name(username) > 0 ||
       this.validation.password(password) > 0
-    )
-      return 1;
+    ){
+      console.log('validation error');
+      return null;
+    }
 
     const cryptedPassword: string = bcrypt.hashSync(password, 16);
     const insertDataQuery = `
