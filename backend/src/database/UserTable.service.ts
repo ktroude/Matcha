@@ -58,7 +58,7 @@ export class UserTableService {
     }
   }
 
-  async changeFirstname(firstname: string) {
+  async updateFirstname(firstname: string) {
     if (this.validation.name(firstname) > 0) return null;
     const insertDataQuery = `
       INSERT INTO User (firstName)
@@ -76,11 +76,11 @@ export class UserTableService {
     }
   }
 
-  async changeLastname(lastname: string) {
+  async updateLastname(lastname: string) {
     if (this.validation.name(lastname) > 0) return null;
     const insertDataQuery = `
       INSERT INTO User (lastName)
-      VALUES (?)
+      VALUES ()
     `;
     try {
       await this.connection.query(insertDataQuery, [lastname]);
@@ -94,7 +94,7 @@ export class UserTableService {
     }
   }
 
-  async changeUsername(username: string) {
+  async updateUsername(username: string) {
     if (this.validation.name(username) > 0) return null;
     const insertDataQuery = `
       INSERT INTO User (username)
@@ -112,7 +112,7 @@ export class UserTableService {
     }
   }
 
-  async changeEmail(email: string) {
+  async updateEmail(email: string) {
     if (this.validation.email(email) > 0) return null;
     const insertDataQuery = `
       INSERT INTO User (email)
@@ -126,7 +126,7 @@ export class UserTableService {
     }
   }
 
-  async changePassword(password: string) {
+  async updatePassword(password: string) {
     if (this.validation.password(password) > 0) return null;
     const cryptedPassword: string = bcrypt.hashSync(password, 16);
     const insertDataQuery = `
@@ -155,7 +155,7 @@ export class UserTableService {
     }
   }
 
-  async changeGender(gender: string) {
+  async updateGender(gender: string) {
     if (this.validation.gender(gender) > 0) return null;
     const insertDataQuery = `
       INSERT INTO User (gender)
@@ -169,7 +169,7 @@ export class UserTableService {
     }
   }
 
-  async changeSexualPref(array: string[]) {
+  async updateSexualPref(array: string[]) {
     if (this.validation.sexualPref(array) > 0) return null;
     const insertDataQuery = `
       INSERT INTO User (sexualPref)
@@ -184,7 +184,7 @@ export class UserTableService {
     }
   }
 
-  async changeBio(bio: string) {
+  async updateBio(bio: string) {
     if (this.validation.biography(bio) > 0) return null;
     const insertDataQuery = `
       INSERT INTO User (biography)
