@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
+import { UserTableService } from './UserTable.service';
 
 @Injectable()
 export class DatabaseService {
   private connection: mysql.Connection;
 
-  constructor() {
+  constructor(private user:UserTableService) {
     this.initializeDatabase(); // Pour établir la connexion lors de la creation du back
   }
-
+  
   private async initializeDatabase() {
     await this.connectToDatabase();
     await this.createUserTable();
@@ -17,7 +18,7 @@ export class DatabaseService {
     await this.createInteractionTable();
     await this.createPictureTable();
     await this.createSearchParamTable();
-    await this.createImposteur();
+    await this.user.createUser('Clara','Morgan','coucoulesloulou@gmail.com','Roger','Cbebckz@22',);
   }
 
   private async connectToDatabase() {
@@ -158,27 +159,4 @@ CREATE TABLE IF NOT EXISTS SearchParam (
     }
   }
 
-  async createImposteur() {
-    const insertDataQuery = `
-      INSERT INTO User (firstName, lastName, email, username, password, registered, gender, sexualPref, biography, fameRating)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    try {
-      await this.connection.query(insertDataQuery, [
-        'Clara',
-        'Morgan',
-        'coucoulesloulou@gmail.com',
-        'Roger',
-        'cbebckz:',
-        true,
-        'Les 2',
-        JSON.stringify(["j'aime tout miam"]),
-        'ceci est une bio',
-        50000,
-      ]);
-      console.log('Données insérées avec succès !');
-    } catch (err) {
-      console.error("Erreur lors de l'insertion des données :", err);
-    }
-  }
 }

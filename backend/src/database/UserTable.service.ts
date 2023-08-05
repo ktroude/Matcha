@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
+import { ValidationService } from 'src/validation/validation.service';
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UserTableService {
   private connection: mysql.Connection;
 
-    constructor() {
-        this.connectToDatabase();
-    }
+  constructor(private validation:ValidationService) {
+    this.connectToDatabase();
+  }
 
   private async connectToDatabase() {
     this.connection = await mysql.createConnection({
@@ -27,7 +30,18 @@ export class UserTableService {
     username: string,
     password: string,
   ) {
-    
+    console.log('debut de la fonction')
+    if (
+      this.validation.name(firstname) > 0 ||
+      this.validation.name(lastname) > 0 ||
+      this.validation.email(email) > 0 ||
+      this.validation.name(username) > 0 ||
+      this.validation.password(password) > 0
+    )
+     console.log('erreur lors de la validation');
+
+
+    const cryptedPassword:string = bcrypt.hashSync(password, 16);
     const insertDataQuery = `
       INSERT INTO User (firstName, lastName, email, username, password)
       VALUES (?, ?, ?, ?, ?)
@@ -38,15 +52,14 @@ export class UserTableService {
         lastname,
         email,
         username,
-        password,
+        cryptedPassword,
       ]);
       console.log('Données insérées avec succès !');
     } catch (err) {
-      console.error(
-        "Erreur lors de l'insertion de la creation du user: ",
-        username,
-        err,
-      );
+      console.error('Erreur lors de la creation du user: ', username, err);
     }
   }
+
+
 }
+

@@ -5,9 +5,11 @@ import { PictureTableService } from './PictureTable.service';
 import { InterestTableService } from './InterestTable.service';
 import { InteractionTableService } from './InteractionTable.service';
 import { UserTableService } from './UserTable.service';
+import { ValidationModule } from 'src/validation/validation.module';
+import { ValidationService } from 'src/validation/validation.service';
 
 @Module({
-  imports: [],
+  imports: [ValidationModule],
   controllers: [],
   providers: [
     DatabaseService,
@@ -16,6 +18,7 @@ import { UserTableService } from './UserTable.service';
     InterestTableService,
     InteractionTableService,
     UserTableService,
+    ValidationService,
   ],
 })
 export class DataBaseModule {}
