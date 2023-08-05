@@ -5,7 +5,7 @@
 
 <script lang="ts">
 	async function createUser() {
-		const response = await fetch(`http://${LOCALHOST}:3000/user/createUser`, {
+		const response = await fetch(`http://localhost:3000/user/createUser`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

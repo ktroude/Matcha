@@ -6,7 +6,7 @@ import { UserService } from '../user/user.service';
 export class DatabaseService {
   private connection: mysql.Connection;
 
-  constructor(private user:UserService) {
+  constructor() {
     this.initializeDatabase(); // Pour établir la connexion lors de la creation du back
   }
   
@@ -18,7 +18,6 @@ export class DatabaseService {
     await this.createInteractionTable();
     await this.createPictureTable();
     await this.createSearchParamTable();
-    await this.user.createUser('Clara','Morgan','coucoulesloulou@gmail.com','Roger','Cbebckz@22',);
   }
 
   private async connectToDatabase() {
