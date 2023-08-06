@@ -18,6 +18,7 @@ export class DatabaseService {
     await this.createInteractionTable();
     await this.createPictureTable();
     await this.createSearchParamTable();
+    this.connection.end()
   }
 
   private async connectToDatabase() {
@@ -27,8 +28,6 @@ export class DatabaseService {
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
     });
-
-    console.log('Connexion à la base de données établie !');
   }
 
   private async createUserTable() {

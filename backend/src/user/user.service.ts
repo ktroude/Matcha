@@ -5,21 +5,19 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  private connection: mysql.Connection;
+    private pool: mysql.Pool;
 
   constructor(private validation: ValidationService) {
-    this.connectToDatabase();
+    this.initializePool ();
   }
 
-  private async connectToDatabase() {
-    this.connection = await mysql.createConnection({
+  private initializePool() {
+    this.pool = mysql.createPool({
       host: process.env.MYSQL_HOST,
       user: process.env.MYSQL_USER,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
     });
-
-    console.log('Connexion à la base de données établie !');
   }
 
   async createUser(
@@ -29,7 +27,6 @@ export class UserService {
     username: string,
     password: string,
   ) {
-    console.log('debut de la fonction');
     if (
       this.validation.name(firstname) > 0 ||
       this.validation.name(lastname) > 0 ||
@@ -47,7 +44,7 @@ export class UserService {
       VALUES (?, ?, ?, ?, ?)
     `;
     try {
-      await this.connection.query(insertDataQuery, [
+      await this.pool.query(insertDataQuery, [
         firstname,
         lastname,
         email,
@@ -67,7 +64,7 @@ export class UserService {
       VALUES (?)
     `;
     try {
-      await this.connection.query(insertDataQuery, [firstname]);
+      await this.pool.query(insertDataQuery, [firstname]);
       console.log('Firstname ', firstname, ' modifié!');
     } catch (err) {
       console.error(
@@ -85,7 +82,7 @@ export class UserService {
       VALUES ()
     `;
     try {
-      await this.connection.query(insertDataQuery, [lastname]);
+      await this.pool.query(insertDataQuery, [lastname]);
       console.log('Lastname ', lastname, ' modifié!');
     } catch (err) {
       console.error(
@@ -103,7 +100,7 @@ export class UserService {
       VALUES (?)
     `;
     try {
-      await this.connection.query(insertDataQuery, [username]);
+      await this.pool.query(insertDataQuery, [username]);
       console.log('username ', username, ' modifié!');
     } catch (err) {
       console.error(
@@ -121,7 +118,7 @@ export class UserService {
       VALUES (?)
     `;
     try {
-      await this.connection.query(insertDataQuery, [email]);
+      await this.pool.query(insertDataQuery, [email]);
       console.log('email ', email, ' modifié!');
     } catch (err) {
       console.error('Erreur lors de la modification de email : ', email, err);
@@ -136,7 +133,7 @@ export class UserService {
       VALUES (?)
     `;
     try {
-      await this.connection.query(insertDataQuery, [cryptedPassword]);
+      await this.pool.query(insertDataQuery, [cryptedPassword]);
       console.log('le password a été modifié!');
     } catch (err) {
       console.error('Erreur lors de la modification du password : ', err);
@@ -150,7 +147,7 @@ export class UserService {
       VALUES (?)
     `;
     try {
-      await this.connection.query(insertDataQuery, [bool]);
+      await this.pool.query(insertDataQuery, [bool]);
       console.log('l email a été validé!');
     } catch (err) {
       console.error('Erreur lors de la validation de l email: ', err);
@@ -164,7 +161,7 @@ export class UserService {
       VALUES (?)
     `;
     try {
-      await this.connection.query(insertDataQuery, [gender]);
+      await this.pool.query(insertDataQuery, [gender]);
       console.log('le genre a été modifié!');
     } catch (err) {
       console.error('Erreur lors de la modification du genre: ', err);
@@ -179,7 +176,7 @@ export class UserService {
     `;
     const jsonArray = JSON.stringify(array);
     try {
-      await this.connection.query(insertDataQuery, [jsonArray]);
+      await this.pool.query(insertDataQuery, [jsonArray]);
       console.log('les sexualPref ont été modifiés!');
     } catch (err) {
       console.error('Erreur lors de la modification des sexualPref: ', err);
@@ -193,7 +190,7 @@ export class UserService {
       VALUES (?)
     `;
     try {
-      await this.connection.query(insertDataQuery, [bio]);
+      await this.pool.query(insertDataQuery, [bio]);
       console.log('les sexualPref ont été modifiés!');
     } catch (err) {
       console.error('Erreur lors de la modification des sexualPref: ', err);
