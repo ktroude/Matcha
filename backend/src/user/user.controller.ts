@@ -8,10 +8,7 @@ export class UserController {
 
     @Post('createUser')
     async createUser():Promise<Boolean>{
-    
-        console.log("cvgdje cbkjzdnemjcne");
         await this.User.createUser("paco", "lebogoss","soloqueuedu06@gmail.com", "pamela", "tO@to123");
-        
         return true; //return token
     }
 }
