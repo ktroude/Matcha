@@ -8,7 +8,7 @@ constructor(private InterestService:InterestService) {}
     @Get('getAll')
     getAllInterest(@Res() res ) {
         let interestArray:any;
-        interestArray = this.InterestService.getAll();
+        interestArray = this.InterestService.getAllInterest();
         return res.json(interestArray);
     }
 
