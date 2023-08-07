@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LocalSignInDto, LocalSignUpDto } from './dto';
 import { UserService } from 'src/user/user.service';
@@ -35,16 +35,28 @@ export class AuthService {
     await this.updateRefreshToken(user.id, tokens.refresh_token);
   }
 
-  logout() {}
+  logout(userId: number) {
+    return this.userService.deleteRefrechTocken(userId);
+  }
 
-  refreshToken() {}
+  async refreshToken(userId: number, refreshToken:string) {
+    const user = await this.userService.findUserById(userId);
+    if (!user || !user.refresh_token)
+      throw new ForbiddenException('Connexion Refusée')
+    const refreshTokenMatches = await bcrypt.compare(refreshToken, user.refresh_token);
+    if (refreshTokenMatches === false)
+      throw new ForbiddenException('Connexion Refusée')
+    const token = await this.getTokens(user.id, user.email);
+    await this.updateRefreshToken(user.id, token.refresh_token);
+    return token;
+  }
 
 
   ////// UTILS //////
 
    async updateRefreshToken(userId:number, refreshToken: string) {
     const hash = bcrypt.hashSync(refreshToken, 16);
-    
+    await this.userService.updateRefreshToken(userId, hash);
 
   }
 

@@ -213,12 +213,39 @@ export class UserService {
       SET biography = ?
       WHERE id = ?
       `;
-
     try {
       await this.pool.query(updateDataQuery, [bio, userId]);
       console.log('les sexualPref ont été modifiés!');
     } catch (err) {
       console.error('Erreur lors de la modification des sexualPref: ', err);
+    }
+  }
+
+  async updateRefreshToken(userId: number, token: string) {
+    const updateDataQuery = `
+      UPDATE User
+      SET refresh_token = ?
+      WHERE id = ?
+      `;
+
+    try {
+      await this.pool.query(updateDataQuery, [token, userId]);
+    } catch (err) {
+      console.error('Erreur lors de la modification du refresh_token: ', err);
+    }
+  }
+
+  async deleteRefrechTocken(userId: number) {
+    const updateDataQuery = `
+      UPDATE User
+      SET refresh_token = ?
+      WHERE id = ?
+      `;
+
+    try {
+      await this.pool.query(updateDataQuery, [null, userId]);
+    } catch (err) {
+      console.error('Erreur lors de la suppression du refresh_token: ', err);
     }
   }
 
@@ -262,6 +289,28 @@ export class UserService {
       console.error(
         'Erreur lors de la recherche du user par username: ',
         username,
+        err,
+      );
+      return null;
+    }
+  }
+
+  async findUserById(userId: number): Promise<mysql.RowDataPacket | null> {
+     const query = `
+    SELECT *
+    FROM User
+    WHERE id = ?
+  `;
+
+    try {
+      const [rows] = await this.pool.query<mysql.RowDataPacket[]>(query, [
+        userId,
+      ]);
+      return rows.length > 0 ? rows[0] : null;
+    } catch (err) {
+      console.error(
+        'Erreur lors de la recherche du user par ID: ',
+        userId,
         err,
       );
       return null;
