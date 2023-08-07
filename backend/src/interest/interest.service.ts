@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
-import { ValidationService } from 'src/validation/validation.service';
+import { InterestValidationService } from './interest.validation.service';
 
 @Injectable()
 export class InterestService {
   private pool: mysql.Pool;
 
-  constructor(private validation: ValidationService) {
+  constructor(private validation: InterestValidationService) {
     this.initializePool();
   }
 

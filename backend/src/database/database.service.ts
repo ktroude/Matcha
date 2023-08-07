@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
-import { UserService } from '../user/user.service';
 
 @Injectable()
 export class DatabaseService {
@@ -18,7 +17,7 @@ export class DatabaseService {
     await this.createInteractionTable();
     await this.createPictureTable();
     await this.createSearchParamTable();
-    this.connection.end()
+    this.connection.end();
   }
 
   private async connectToDatabase() {
@@ -33,17 +32,18 @@ export class DatabaseService {
   private async createUserTable() {
     const createTableQuery = `
     CREATE TABLE IF NOT EXISTS User (
-    id          INT PRIMARY KEY AUTO_INCREMENT,
-    firstName   VARCHAR(55) NOT NULL,
-    lastName    VARCHAR(55) NOT NULL,
-    email       VARCHAR(255) NOT NULL,
-    username    VARCHAR(55) NOT NULL,
-    password    VARCHAR(255) NOT NULL,
-    registered  BOOLEAN DEFAULT FALSE,
-    gender      VARCHAR(10),
-    sexualPref  JSON,
-    biography   TEXT,
-    fameRating  INT
+    id            INT PRIMARY KEY AUTO_INCREMENT,
+    firstName     VARCHAR(55) NOT NULL,
+    lastName      VARCHAR(55) NOT NULL,
+    email         VARCHAR(255) NOT NULL UNIQUE,
+    username      VARCHAR(55) NOT NULL UNIQUE,
+    password      VARCHAR(255) NOT NULL,
+    refresh_token VARCHAR(255),
+    registered    BOOLEAN NOT NULL DEFAULT FALSE,
+    gender        VARCHAR(10),
+    sexualPref    JSON,
+    biography     TEXT,
+    fameRating    INT
 ); 
    `;
 

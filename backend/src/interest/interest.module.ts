@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { InterestService } from './interest.service';
 import { InterestController } from './interest.controller';
-import { ValidationModule } from 'src/validation/validation.module';
-import { ValidationService } from 'src/validation/validation.service';
+import { InterestValidationService } from './interest.validation.service';
 
 @Module({
-  imports: [ValidationModule],
+  imports: [],
   controllers: [InterestController],
-  providers: [InterestService, ValidationService],
+  providers: [InterestService, InterestValidationService],
 })
 export class InterestModule {}
