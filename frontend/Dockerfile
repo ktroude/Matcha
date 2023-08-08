@@ -1,10 +1,6 @@
 FROM node:latest
-WORKDIR /app
+WORKDIR /src/app
 COPY ./frontend ./
-RUN npm install -g serve
-RUN npm install -g sass
-RUN npm install esbuild
-RUN npm install svelte-preprocess @rollup/plugin-typescript typescript tslib @tsconfig/svelte --save-dev
-RUN npm install
+RUN npm install && npm run build
 EXPOSE 8080
-CMD npm run dev
+CMD  npm run dev

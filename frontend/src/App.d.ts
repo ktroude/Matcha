@@ -1,12 +1,12 @@
-// App.d.ts
+// See https://kit.svelte.dev/docs/types#app
+// for information about these interfaces
+declare global {
+	namespace App {
+		// interface Error {}
+		// interface Locals {}
+		// interface PageData {}
+		// interface Platform {}
+	}
+}
 
-/// <reference types="svelte" />
-
-interface AppProps {
-    // Add any prop types here if needed
-  }
-  
-  declare class App extends SvelteComponentTyped<AppProps> {}
-  
-  export default App;
-  
+export {};
