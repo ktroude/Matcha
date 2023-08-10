@@ -1,5 +1,4 @@
 import { NestFactory, Reflector } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import * as cors from 'cors';
 import * as dotenv from 'dotenv'; // Importez le package dotenv

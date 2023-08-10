@@ -25,7 +25,7 @@ services:
     networks:
       - matcha
     volumes:
-      - ./backend:/app
+      - ./backend/src:/app
   frontend:
     build:
       context: ./
