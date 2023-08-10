@@ -1,14 +1,28 @@
-import { Controller, Get, Post } from '@nestjs/common';
-import { UserService } from './user.service';
+import { Body, Controller, ForbiddenException, Get, Post, Req } from '@nestjs/common';
+import { LocalSignUpDto } from 'src/auth/dto';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('user')
 export class UserController {
 
-    constructor(private User:UserService){}
+constructor(private Auth:AuthService){}
 
-    @Post('createUser')
-    async createUser():Promise<Boolean>{
-        await this.User.createUser("paco", "lebogoss","soloqueuedu06@gmail.com", "pamela", "tO@to123");
-        return true; //return token
+@Post('userCreation')
+async userCreation(@Body('user') userData: LocalSignUpDto): Promise<boolean> {
+    if (!userData){
+        throw new ForbiddenException('Invalid dto');
     }
+    try {
+        if (userData && userData.username) {
+            await this.Auth.signUpLocal(userData);
+            return true;
+        } else {
+            console.log("Invalid userData:", userData);
+            return false;
+        }
+    } catch (error) {
+        console.error("Error parsing request body:", error);
+        return false;
+    }
+}
 }
