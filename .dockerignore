@@ -1,2 +1,5 @@
-backend/node_modules
-frontend/node_modules
+node_modules
+.git*
+.pretti*
+.vscode
+README.md

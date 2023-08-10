@@ -1,5 +1,5 @@
 export class LocalSignInDto {
-    username: string; // cela peut aussi etre le username
+    username: string;
     password: string;
 }
 
