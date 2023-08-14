@@ -38,7 +38,6 @@
 	let user = {};
 	let newUserName: string, newLastName: string, newFirstName: string, newEmail: string, newPassword: string;
 
-
 	async function createUser() {
     let user = {
 		firstname: newFirstName,
@@ -49,6 +48,7 @@
     };
 
     try {
+		console.log('fecthing');
 		const response = await fetch(`http://localhost:3000/user/userCreation`, {
 			method: 'POST',
 			headers: {
@@ -57,15 +57,16 @@
 			body: JSON.stringify({ user: user }),
 		});
 
-      if (response.ok) {
-		console.log("User created successfully.");
-		newUserName = "";
-		newLastName = "";
-		newFirstName = "";
-		newEmail = "";
-		newPassword = "";
-      } else {
-		console.log("Failed to create user.");
+		if (!response.ok) {
+			console.log("Failed to create user.");
+		} else {
+			console.log(document?.cookie?.split(';'));
+			console.log("User created successfully.");
+			newUserName = "";
+			newLastName = "";
+			newFirstName = "";
+			newEmail = "";
+			newPassword = "";
       }
     } catch (error) {
 		console.error("An error occurred:", error);

@@ -1,5 +1,6 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as dotenv from 'dotenv'; // Importez le package dotenv
 import { AccessTokenGuard } from './auth/common/guards';
@@ -17,6 +18,7 @@ async function bootstrap() {
       credentials: true,
     }),
   );
+  app.use(cookieParser());
   await app.listen(3000);
 }
 bootstrap();
