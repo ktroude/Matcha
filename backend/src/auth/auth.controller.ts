@@ -3,9 +3,10 @@ import { AuthService } from './auth.service';
 import { LocalSignInDto, LocalSignUpDto } from './dto';
 import { Tokens } from './types';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AccessTokenGuard, RefreshTokenGuard } from './common/guards';
 import { GetCurrentUser, GetCurrentUserId, Public } from './common/decorators';
+import { access } from 'fs';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +23,21 @@ constructor(private authService:AuthService) {}
     @Public()
     @Post('local/signin')
     @HttpCode(HttpStatus.OK)
-    async signInLocal(@Body() dto: LocalSignInDto): Promise <Tokens | null> {
-        return await this.authService.signInLocal(dto);        
+    async signInLocal(@Body() dto: LocalSignInDto, @Res() res: Response): Promise <null> {
+        const tokens = await this.authService.signInLocal(dto);
+        if (tokens) {
+            res.cookie('access_token', tokens.access_token, {
+                httpOnly: true,
+                secure: true,
+            });
+            res.cookie('refresh_token', tokens.refresh_token, {
+                httpOnly:true,
+                secure:true,
+            })
+            res.status(HttpStatus.OK).json({ message: 'Connexion réussie' });
+        }
+        else res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Échec de la connexion' });
+        return null;
     }
 
     @Post('logout')
