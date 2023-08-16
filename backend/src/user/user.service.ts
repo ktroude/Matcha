@@ -42,7 +42,7 @@ export class UserService {
       return null;
     }
 
-    const cryptedPassword: string = bcrypt.hashSync(password, 16);
+    const cryptedPassword: string = bcrypt.hashSync(password, 10);
     const insertDataQuery = `
       INSERT INTO User (firstName, lastName, email, username, password)
       VALUES (?, ?, ?, ?, ?)
@@ -146,7 +146,7 @@ export class UserService {
 
   async updatePassword(userId: number, password: string) {
     if (this.validation.password(password) > 0) return null;
-    const cryptedPassword: string = bcrypt.hashSync(password, 16);
+    const cryptedPassword: string = bcrypt.hashSync(password, 10);
     const updateDataQuery = `
       UPDATE User
       SET password = ?
@@ -282,6 +282,7 @@ export class UserService {
     SELECT *
     FROM User
     WHERE username = ?
+    LIMIT 1
   `;
 
     try {

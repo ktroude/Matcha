@@ -56,7 +56,7 @@ export class AuthService {
   ////// UTILS //////
 
    async updateRefreshToken(userId:number, refreshToken: string) {
-    const hash = bcrypt.hashSync(refreshToken, 16);
+    const hash = bcrypt.hashSync(refreshToken, 10);
     await this.userService.updateRefreshToken(userId, hash);
   }
 
@@ -69,7 +69,7 @@ export class AuthService {
           email,
         },
         {
-          secret: 'le secret de AT dans .env',
+          secret: 'secret a mettre en .env',
           expiresIn: 60 * 15, // timer en sec donc ici 15 min
         },
       ),
