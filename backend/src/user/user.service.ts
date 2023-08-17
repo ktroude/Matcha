@@ -6,9 +6,6 @@ import { LocalSignUpDto } from 'src/auth/dto';
 
 @Injectable()
 export class UserService {
-  signUpLocal(userData: LocalSignUpDto) {
-    throw new Error('Method not implemented.');
-  }
   private pool: mysql.Pool;
 
   constructor(private validation: UserValidationService) {
