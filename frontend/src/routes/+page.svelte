@@ -51,7 +51,7 @@
 
     try {
 		console.log('fecthing');
-		const response = await fetch(`http://localhost:3000/user/userCreation`, {
+		const response = await fetch(`http://localhost:3000/auth/local/signup`, {
 			method: 'POST',
             credentials: 'include',
 			headers: {
