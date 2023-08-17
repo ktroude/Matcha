@@ -1,33 +1,97 @@
-import { Body, Controller, ForbiddenException, Post, Res } from '@nestjs/common';
-import { Response } from 'express';
-import { LocalSignUpDto } from 'src/auth/dto';
-import { AuthService } from 'src/auth/auth.service';
+import {
+  Controller,
+  NotFoundException,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Body,
+  Post,
+} from '@nestjs/common';
+import { UserService } from './user.service';
+import { GetCurrentUserId } from 'src/auth/common/decorators';
 
 @Controller('user')
 export class UserController {
-  constructor(private Auth: AuthService) {}
+  constructor(private userService: UserService) {}
 
-  @Post('userCreation')
-  async userCreation(@Body('user') userData: LocalSignUpDto, @Res() res: Response) {
-    if (!userData) {
-      throw new ForbiddenException('Invalid dto');
-    }
-    try {
-      if (userData && userData.username) {
-        const tokens = await this.Auth.signUpLocal(userData);
-        console.log(tokens);
+  @Get('me')
+  @HttpCode(HttpStatus.OK)
+  async getUserData(@GetCurrentUserId() userId: number) {
+    const { password, refresh_token, ...userData } =
+      await this.userService.findUserById(userId);
+    if (!userData) throw new NotFoundException('Utilisateur introuvable');
+    return userData;
+  }
 
-        res.cookie('access_token', tokens.access_token, { maxAge: 3600000, httpOnly: false });
-        res.cookie('refresh_token', tokens.refresh_token, { maxAge: 3600000, httpOnly: false });
+  @Post('update/email')
+  @HttpCode(HttpStatus.OK)
+  async updateEmail(
+    @GetCurrentUserId() userId: number,
+    @Body('email') email: string,
+  ) {
+    return await this.userService.updateEmail(userId, email);
+  }
 
-        return res.status(200).json({ success: true });
-      } else {
-        console.log("Invalid userData:", userData);
-        return res.status(500).json({ success: false, message: 'Invalid user data' });
-      }
-    } catch (error) {
-      console.error("Error parsing request body:", error);
-      return res.status(500).json({ success: false, message: 'Error parsing request body' });
-    }
+  @Post('update/password')
+  @HttpCode(HttpStatus.OK)
+  async updatePassword(
+    @GetCurrentUserId() userId: number,
+    @Body('password') password: string,
+  ) {
+    return await this.userService.updatePassword(userId, password);
+  }
+
+  @Post('update/firstname')
+  @HttpCode(HttpStatus.OK)
+  async updateFirstname(
+    @GetCurrentUserId() userId: number,
+    @Body('firstname') firstname: string,
+  ) {
+    return await this.userService.updateFirstname(userId, firstname);
+  }
+
+  @Post('update/lastname')
+  @HttpCode(HttpStatus.OK)
+  async updateLastname(
+    @GetCurrentUserId() userId: number,
+    @Body('lastname') lastname: string,
+  ) {
+    return await this.userService.updateLastname(userId, lastname);
+  }
+
+  @Post('update/bio')
+  @HttpCode(HttpStatus.OK)
+  async updateBio(
+    @GetCurrentUserId() userId: number,
+    @Body('bio') bio: string,
+  ) {
+    return await this.userService.updateBio(userId, bio);
+  }
+
+  @Post('update/gender')
+  @HttpCode(HttpStatus.OK)
+  async updateGender(
+    @GetCurrentUserId() userId: number,
+    @Body('gender') gender: string,
+  ) {
+    return await this.userService.updateGender(userId, gender);
+  }
+
+  @Post('update/pref')
+  @HttpCode(HttpStatus.OK)
+  async updatePref(
+    @GetCurrentUserId() userId: number,
+    @Body('pref') pref: string[],
+  ) {
+    return await this.userService.updateSexualPref(userId, pref);
+  }
+
+  @Post('update/username')
+  @HttpCode(HttpStatus.OK)
+  async updateUsername(
+    @GetCurrentUserId() userId: number,
+    @Body('username') username: string,
+  ) {
+    return await this.userService.updateUsername(userId, username);
   }
 }

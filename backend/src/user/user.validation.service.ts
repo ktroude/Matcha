@@ -4,13 +4,13 @@ import { isAlpha } from 'validator';
 @Injectable()
 export class UserValidationService {
   name(name: string): number {
-    if (name.length < 3 || name.length > 20) {
+    if (name.length < 1 || name.length > 20) {
       console.log('name validation erreur, string trop longue ou trop courte');
       return 1;
     }
     if (isAlpha(name) === false) {
       console.log(
-        'name validation erreur, la string contient des charactère interdits',
+        'name validation erreur, la string contient des charactères interdits',
       );
       return 2;
     }

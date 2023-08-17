@@ -53,6 +53,7 @@
 		console.log('fecthing');
 		const response = await fetch(`http://localhost:3000/user/userCreation`, {
 			method: 'POST',
+            credentials: 'include',
 			headers: {
 			'Content-Type': 'application/json',
 			},

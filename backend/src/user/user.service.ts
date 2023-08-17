@@ -1,14 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
 import * as bcrypt from 'bcrypt';
 import { UserValidationService } from './user.validation.service';
-import { LocalSignUpDto } from 'src/auth/dto';
 
 @Injectable()
 export class UserService {
-  signUpLocal(userData: LocalSignUpDto) {
-      throw new Error('Method not implemented.');
-  }
   private pool: mysql.Pool;
 
   constructor(private validation: UserValidationService) {
@@ -42,7 +38,7 @@ export class UserService {
       return null;
     }
 
-    const cryptedPassword: string = bcrypt.hashSync(password, 16);
+    const cryptedPassword: string = bcrypt.hashSync(password, 10);
     const insertDataQuery = `
       INSERT INTO User (firstName, lastName, email, username, password)
       VALUES (?, ?, ?, ?, ?)
@@ -65,7 +61,8 @@ export class UserService {
   }
 
   async updateFirstname(userId: number, firstname: string) {
-    if (this.validation.name(firstname) > 0) return null;
+    if (this.validation.name(firstname) > 0)
+      throw new ForbiddenException('Firstname invalide');
     const updateDataQuery = `
       UPDATE User
       SET firstName = ?
@@ -81,11 +78,13 @@ export class UserService {
         firstname,
         err,
       );
+      throw new ForbiddenException('Utilisateur introuvable');
     }
   }
 
   async updateLastname(userId: number, lastname: string) {
-    if (this.validation.name(lastname) > 0) return null;
+    if (this.validation.name(lastname) > 0)
+      throw new ForbiddenException('Lastname invalide');
     const updateDataQuery = `
       UPDATE User
       SET lastName = ?
@@ -101,11 +100,13 @@ export class UserService {
         lastname,
         err,
       );
+      throw new ForbiddenException('Utilisateur introuvable');
     }
   }
 
   async updateUsername(userId: number, username: string) {
-    if (this.validation.name(username) > 0) return null;
+    if (this.validation.name(username) > 0)
+      throw new ForbiddenException('Username invalide');
     const updateDataQuery = `
       UPDATE User
       SET username = ?
@@ -121,11 +122,16 @@ export class UserService {
         username,
         err,
       );
+      throw new ForbiddenException(
+        'Utilisateur introuvable ou username deja pris',
+      );
     }
   }
 
   async updateEmail(userId: number, newEmail: string) {
-    if (this.validation.email(newEmail) > 0) return null;
+    if (this.validation.email(newEmail) > 0) {
+      throw new ForbiddenException('Email invalide');
+    }
     const updateDataQuery = `
       UPDATE User
       SET email = ?
@@ -141,23 +147,28 @@ export class UserService {
         newEmail,
         err,
       );
+      throw new ForbiddenException(
+        "L'utilisateur n'existe pas ou l'adresse mail est deja prise",
+      );
     }
   }
 
   async updatePassword(userId: number, password: string) {
-    if (this.validation.password(password) > 0) return null;
-    const cryptedPassword: string = bcrypt.hashSync(password, 16);
+    if (this.validation.password(password) > 0) {
+      throw new ForbiddenException('Mot de passe trop simple');
+    }
+    const cryptedPassword: string = bcrypt.hashSync(password, 10);
     const updateDataQuery = `
       UPDATE User
       SET password = ?
       WHERE id = ?
       `;
-
     try {
       await this.pool.query(updateDataQuery, [cryptedPassword, userId]);
       console.log('le password a été modifié!');
     } catch (err) {
       console.error('Erreur lors de la modification du password : ', err);
+      throw new ForbiddenException("L'utilisateur n'existe pas imo");
     }
   }
 
@@ -178,7 +189,8 @@ export class UserService {
   }
 
   async updateGender(userId: number, gender: string) {
-    if (this.validation.gender(gender) > 0) return null;
+    if (this.validation.gender(gender) > 0)
+      throw new ForbiddenException('Genre invalide');
     const updateDataQuery = `
       UPDATE User
       SET gender = ?
@@ -190,11 +202,13 @@ export class UserService {
       console.log('le genre a été modifié!');
     } catch (err) {
       console.error('Erreur lors de la modification du genre: ', err);
+      throw new ForbiddenException('Utilisateur introuvable');
     }
   }
 
   async updateSexualPref(userId: number, array: string[]) {
-    if (this.validation.sexualPref(array) > 0) return null;
+    if (this.validation.sexualPref(array) > 0)
+      throw new ForbiddenException('Prefs invalides');
     const jsonArray = JSON.stringify(array);
     const updateDataQuery = `
       UPDATE User
@@ -207,11 +221,13 @@ export class UserService {
       console.log('les sexualPref ont été modifiés!');
     } catch (err) {
       console.error('Erreur lors de la modification des sexualPref: ', err);
+      throw new ForbiddenException('Utilisateur introuvable');
     }
   }
 
   async updateBio(userId: number, bio: string) {
-    if (this.validation.biography(bio) > 0) return null;
+    if (this.validation.biography(bio) > 0)
+      throw new ForbiddenException('Bio invalide');
     const updateDataQuery = `
       UPDATE User
       SET biography = ?
@@ -222,6 +238,7 @@ export class UserService {
       console.log('les sexualPref ont été modifiés!');
     } catch (err) {
       console.error('Erreur lors de la modification des sexualPref: ', err);
+      throw new ForbiddenException('Utilisateur introuvable');
     }
   }
 
@@ -282,6 +299,7 @@ export class UserService {
     SELECT *
     FROM User
     WHERE username = ?
+    LIMIT 1
   `;
 
     try {
@@ -300,7 +318,7 @@ export class UserService {
   }
 
   async findUserById(userId: number): Promise<mysql.RowDataPacket | null> {
-     const query = `
+    const query = `
     SELECT *
     FROM User
     WHERE id = ?

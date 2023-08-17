@@ -8,9 +8,9 @@ export class InterestService {
   private pool: mysql.Pool;
 
   constructor(
-    private validation:   InterestValidationService,
-    private userService:  UserService,
-    ) {
+    private validation: InterestValidationService,
+    private userService: UserService,
+  ) {
     this.initializePool();
   }
 
@@ -64,11 +64,10 @@ export class InterestService {
         selectDataQuery,
         [userId],
       );
-      let interestString:string[] = [];
-      for (let i = 0; i < rows.length; i++){
-        const tag:string = await this.getInterestById(rows[i].interestId);
-        if (tag.length)
-          interestString.push(tag);
+      let interestString: string[] = [];
+      for (let i = 0; i < rows.length; i++) {
+        const tag: string = await this.getInterestById(rows[i].interestId);
+        if (tag.length) interestString.push(tag);
       }
       return interestString;
     } catch (err) {
@@ -83,7 +82,7 @@ export class InterestService {
       console.log('tags non valides', tags);
       throw new ForbiddenException('Wrong Tags');
     }
-    if (await this.userService.findUserById(userId) === null) {
+    if ((await this.userService.findUserById(userId)) === null) {
       console.log("Ce user n'existe pas dans la db: ", userId);
       throw new ForbiddenException('User does not exist');
     }
@@ -98,13 +97,13 @@ export class InterestService {
       // checker si le tag existe dans la table Interest
       if (interestId > 0) array.push(interestId);
       //sinon on l'ajoute
-      else{
+      else {
         interestId = await this.addInterest(tags[i]);
         array.push(interestId);
-      } 
+      }
     }
     // et enfin on creer toutes les nouvelles relations
-    for (let j = 0; j< array.length; j++) {
+    for (let j = 0; j < array.length; j++) {
       await this.createRelation(userId, array[j]);
     }
   }
@@ -178,16 +177,13 @@ export class InterestService {
     }
   }
 
-  async getInterestById(tagId: number) : Promise<string> {
-      const selectDataQuery = `
+  async getInterestById(tagId: number): Promise<string> {
+    const selectDataQuery = `
         SELECT * FROM Interest
         WHERE id = ?
     `;
     try {
-      const [rows] = await this.pool.query(
-        selectDataQuery,
-        [tagId],
-      );
+      const [rows] = await this.pool.query(selectDataQuery, [tagId]);
       return rows[0].tag;
     } catch (err) {
       console.error('Erreur lors de la récupération des intérêts :', err);

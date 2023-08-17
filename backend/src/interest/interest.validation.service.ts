@@ -42,5 +42,4 @@ export class InterestValidationService {
     }
     return true;
   }
-
 }
