@@ -1,0 +1,106 @@
+.swipe_box {
+  border-radius: 20px;
+  margin: auto;
+  width: 600px;
+  height: 850px;
+  color: white;
+  font-size: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.swipe_user {
+  border-radius: 20px;
+  margin: auto;
+  width: 500px;
+  height: 600px;
+  background-color: rgba(22, 22, 22, 0.396);
+  -webkit-backdrop-filter: blur(2px);
+  -webkit-backdrop-filter-backdrop-filter: blur(2px);
+  color: white;
+  font-size: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: rgba(255, 66, 233, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+  transition: all 0.15s ease-in-out;
+}
+
+.picture_user {
+  border-radius: 20px;
+  width: 400px;
+  height: 400px;
+  background-color: white;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  color: white;
+  font-size: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: rgba(255, 66, 233, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+  transition: all 0.15s ease-in-out;
+}
+
+.swipe_buttons_box {
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
+  align-items: center;
+  justify-content: center;
+}
+
+.swipe_button {
+  border-radius: 100%;
+  font-size: 30px;
+  width: 60px;
+  height: 60px;
+  color: red;
+  background-color: rgba(22, 22, 22, 0.396);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  border: none;
+  margin-right: 30px;
+  transition: transform 0.3s;
+  transform: scale(1.2);
+}
+.swipe_button:hover {
+  cursor: pointer;
+  transform: scale(1.5);
+}
+
+.like_button {
+  font-size: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+  background-color: rgba(22, 22, 22, 0.396);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  border: none;
+  color: limegreen;
+  margin-left: 30px;
+  transform: scale(1.2);
+  transition: transform 0.3s;
+}
+.like_button:hover {
+  cursor: pointer;
+  transform: scale(1.5);
+}
+
+.homepage_button {
+  border: none;
+  background: none;
+  color: white;
+  color: white;
+  font-size: 16px;
+  transition: all 0.15s ease-in-out;
+}
+.homepage_button:hover {
+  cursor: pointer;
+  transform: scale(1.5);
+}/*# sourceMappingURL=swipe.css.map */

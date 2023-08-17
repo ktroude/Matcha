@@ -27,6 +27,12 @@ export class UserService {
     username: string,
     password: string,
   ): Promise<mysql.RowDataPacket | null> {
+    console.log("creating user...");
+    console.log(firstname);
+    console.log(lastname);
+    console.log(email);
+    console.log(username);
+    console.log(password);
     if (
       this.validation.name(firstname) > 0 ||
       this.validation.name(lastname) > 0 ||
@@ -37,6 +43,7 @@ export class UserService {
       console.log('validation error');
       return null;
     }
+    console.log("user created...");
 
     const cryptedPassword: string = bcrypt.hashSync(password, 10);
     const insertDataQuery = `

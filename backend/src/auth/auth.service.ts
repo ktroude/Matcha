@@ -4,6 +4,7 @@ import { LocalSignInDto, LocalSignUpDto } from './dto';
 import { UserService } from 'src/user/user.service';
 import { Tokens } from './types';
 import * as bcrypt from 'bcrypt';
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,36 @@ export class AuthService {
     return token;
   }
 
+  async sendMail(usermail: string) {
+    console.log("sending mail to:", usermail);
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      secure: true,
+      port: 465,
+      tls: {
+        ciphers: 'TLS_CHACHA20_POLY1305_SHA256',
+      },
+      auth: {
+        type: "login",
+        user: process.env.MAIL_ACCOUNT,
+        pass: process.env.MAIL_PASSWORD,
+      },
+    });
+    const mailOptions = {
+      from: process.env.MAIL_ACCOUNT,
+      to: usermail,
+      subject: 'Test mail! :)',
+      text: 'did it work?',
+    };
+    transporter.sendMail(mailOptions, function(error, info){
+      if(error){
+        console.log("error");
+      }
+      else
+        console.log("success");
+    });
+  }
+
   async signUpLocal(dto: LocalSignUpDto) {
     const user = await this.userService.createUser(
       dto.firstname,
@@ -29,6 +60,7 @@ export class AuthService {
     );
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRefreshToken(user.id, tokens.refresh_token);
+    await this.sendMail(dto.email);
     return tokens;
   }
 

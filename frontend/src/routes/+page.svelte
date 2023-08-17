@@ -7,7 +7,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="homepage.css">
+    <link rel="stylesheet" href="swipe.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
@@ -30,6 +31,7 @@
 		<input type="email" id="email" placeholder="Email:" bind:value={newEmail} />		  
 		<input type="password" id="password" placeholder="Password:" bind:value={newPassword} />
 		<button type="button" class="create_user" on:click={createUser}>Create User</button>
+		<button class="button_nav" on:click={() => location.href = `/swipe`}>Swipe Page</button>
     </div>
 </body>
 </html>
@@ -49,7 +51,7 @@
 
     try {
 		console.log('fecthing');
-		const response = await fetch(`http://localhost:3000/user/userCreation`, {
+		const response = await fetch(`http://localhost:3000/auth/local/signup`, {
 			method: 'POST',
             credentials: 'include',
 			headers: {

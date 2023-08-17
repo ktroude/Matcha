@@ -21,7 +21,7 @@ export class AuthController {
   @Public()
   @Post('local/signup')
   @HttpCode(HttpStatus.CREATED)
-  async signUpLocal(@Body() dto: LocalSignUpDto, @Res() res) {
+  async signUpLocal(@Body('user') dto: LocalSignUpDto, @Res() res) {
     const tokens = await this.authService.signUpLocal(dto);
     if (tokens) {
       res.cookie('access_token', tokens.access_token, {
