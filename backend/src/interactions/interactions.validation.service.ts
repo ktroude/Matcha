@@ -10,9 +10,8 @@ export class InteractionValidation {
     return 0;
   }
 
-  checkBool(bool:boolean) {
-    if (typeof bool !== 'boolean')
-        return 1;
+  checkBool(bool: boolean) {
+    if (typeof bool !== 'boolean') return 1;
     return 0;
   }
 }

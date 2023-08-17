@@ -41,7 +41,12 @@ export class InteractionService {
     }
   }
 
-  async isItAMatch(userId, viewedId): Promise<boolean> {
+  async isItAMatch(userId: number, viewedId: number): Promise<boolean> {
+    if (
+      this.validation.checkId(userId) > 0 ||
+      this.validation.checkId(viewedId) > 0
+    )
+      throw new UnprocessableEntityException('datas incorrectes');
     const query = `
     SELECT *
     FROM Interaction

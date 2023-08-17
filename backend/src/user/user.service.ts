@@ -2,7 +2,6 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
 import * as bcrypt from 'bcrypt';
 import { UserValidationService } from './user.validation.service';
-import { LocalSignUpDto } from 'src/auth/dto';
 
 @Injectable()
 export class UserService {

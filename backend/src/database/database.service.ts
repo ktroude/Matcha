@@ -8,7 +8,7 @@ export class DatabaseService {
   constructor() {
     this.initializeDatabase(); // Pour établir la connexion lors de la creation du back
   }
-  
+
   private async initializeDatabase() {
     await this.connectToDatabase();
     await this.createUserTable();
@@ -156,5 +156,4 @@ CREATE TABLE IF NOT EXISTS SearchParam (
       );
     }
   }
-
 }
