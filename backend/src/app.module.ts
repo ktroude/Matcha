@@ -4,6 +4,7 @@ import { UserModule } from './user/user.module';
 import { InterestModule } from './interest/interest.module';
 import { AuthModule } from './auth/auth.module';
 import { InteractionModule } from './interactions/interactions.module';
+import { PictureModule } from './pictures/picture.module';
 
 @Module({
   imports: [
@@ -12,8 +13,7 @@ import { InteractionModule } from './interactions/interactions.module';
     UserModule,
     AuthModule,
     InteractionModule,
+    PictureModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

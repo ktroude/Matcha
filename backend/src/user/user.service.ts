@@ -275,6 +275,7 @@ export class UserService {
     SELECT *
     FROM User
     WHERE email = ?
+    LIMIT 1
   `;
 
     try {

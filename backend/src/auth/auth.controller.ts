@@ -35,7 +35,6 @@ export class AuthController {
       res
         .status(HttpStatus.UNAUTHORIZED)
         .json({ message: 'Échec de la connexion' });
-    return null;
   }
 
   @Public()
@@ -58,8 +57,6 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   logout(@GetCurrentUserId() userId: number) {
-    console.log('id === ', userId);
-
     return this.authService.logout(userId);
   }
 
