@@ -9,7 +9,6 @@ import { GetCurrentUser, GetCurrentUserId, Public } from './common/decorators';
 export class AuthController {
 constructor(private authService:AuthService) {}
 
-// Return 0 on success ou 1 on failure
     @Public()
     @Post('local/signup')
     @HttpCode(HttpStatus.CREATED)
@@ -49,6 +48,8 @@ constructor(private authService:AuthService) {}
     @Post('logout')
     @HttpCode(HttpStatus.OK)
     logout(@GetCurrentUserId() userId: number ) {
+        console.log("id === ", userId);
+        
         return this.authService.logout(userId);
     }
 
