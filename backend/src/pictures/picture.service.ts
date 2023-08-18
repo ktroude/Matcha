@@ -1,6 +1,9 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
-import path from 'path';
 import * as fs from 'fs';
 import { FileValidationPipe } from './picture.validation.service';
 
@@ -21,24 +24,47 @@ export class PictureService {
     });
   }
 
+  async getPicturebyId(userId: number, pictureId: number) {
+    const queryFirstStep = `
+      SELECT *
+      FROM Picture
+      WHERE userId = ?
+      AND id = ?
+    `;
+    try {
+      const [row] = await this.pool.query<mysql.RowDataPacket[]>(
+        queryFirstStep,
+        [userId, pictureId],
+      );
+      if (row && row[0] && row[0].url) {
+        return row[0].url;
+      } else throw new NotFoundException('Fichier introuvable');
+    } catch (err) {
+      throw new ForbiddenException('Connexion Refusée');
+    }
+  }
+
   // Check les fichiers, les upload sur le serveur si tout va bien, et push leur chemin dans la DB
   async uploadFiles(files: Array<Express.Multer.File>, userId: number) {
+    console.log('debut service');
     if ((await this.checkNumberOfPicture(userId)) + files.length > 5)
       throw new ForbiddenException(
         "Tu as deja 5 photos de profil, impossible d'en ajouter plus",
       );
+    console.log('check nb photo done');
     files.forEach((file) => {
       // Appliquer FileValidationPipe à chaque élément du tableau
       this.fileValidationPipe.transform(file, null);
     });
-    const uploadPath = path.join(__dirname, 'uploaded_files'); // Répertoire de stockage
+    console.log('check pipe done');
+    const uploadPath = '/app/pictures/uploaded_files'; // Répertoire de stockage
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath);
     }
     const savedFilePaths = []; // Pour stocker les chemins des fichiers enregistrés
     files.forEach((file) => {
       const fileName = file.originalname;
-      const filePath = path.join(uploadPath, fileName);
+      const filePath = uploadPath + '/' + fileName;
       // Enregistrement du fichier sur le serveur
       fs.writeFileSync(filePath, file.buffer);
       savedFilePaths.push(filePath); // Stocker le chemin du fichier enregistré
@@ -110,7 +136,5 @@ export class PictureService {
     }
   }
 
-  async deletePicture(pictureId:number) {
-
-  }
+  async deletePicture(pictureId: number) {}
 }
