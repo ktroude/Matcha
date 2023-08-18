@@ -21,7 +21,7 @@ export class AuthController {
   @Public()
   @Post('local/signup')
   @HttpCode(HttpStatus.CREATED)
-  async signUpLocal(@Body() dto: LocalSignUpDto, @Res() res) {
+  async signUpLocal(@Body('user') dto: LocalSignUpDto, @Res() res) {
     const tokens = await this.authService.signUpLocal(dto);
     if (tokens) {
       res.cookie('access_token', tokens.access_token, {
@@ -36,6 +36,22 @@ export class AuthController {
         .status(HttpStatus.UNAUTHORIZED)
         .json({ message: 'Échec de la connexion' });
   }
+
+    @Post('validate/mail')
+    @HttpCode(HttpStatus.OK)
+    async getUserData(@GetCurrentUserId() userId: number, @Body('token') token: string, @Res() res) {
+      console.log("I'm in!");
+      console.log(userId);
+      //check du refresh token et de l'id pour valider
+      //pb avec le back, l'id ne correspond pas (84 pour le user, 88 pour la db -> impossible de trouver dans la db donc crash)
+      const validation = await this.authService.checkUserToken(userId, token);
+      if (validation == true)
+        return res.status(HttpStatus.OK).json({ message: 'Connexion réussie' });
+      console.log("failed to authenticate account");
+      return res
+      .status(HttpStatus.UNAUTHORIZED)
+      .json({ message: 'Échec de la connexion' });
+    }
 
   @Public()
   @Post('local/signin')

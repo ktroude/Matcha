@@ -20,7 +20,7 @@ export class AuthService {
     return token;
   }
 
-  async sendMail(usermail: string) {
+  async sendMail(usermail: string, token: string) {
     console.log("sending mail to:", usermail);
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -38,8 +38,8 @@ export class AuthService {
     const mailOptions = {
       from: process.env.MAIL_ACCOUNT,
       to: usermail,
-      subject: 'Test mail! :)',
-      text: 'did it work?',
+      subject: 'Matcha account validation',
+      text: 'http://localhost:8080/validation?token=' + token,
     };
     transporter.sendMail(mailOptions, function(error, info){
       if(error){
@@ -60,7 +60,7 @@ export class AuthService {
     );
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRefreshToken(user.id, tokens.refresh_token);
-    await this.sendMail(dto.email);
+    await this.sendMail(dto.email, tokens.refresh_token);
     return tokens;
   }
 
@@ -81,6 +81,24 @@ export class AuthService {
     const token = await this.getTokens(user.id, user.email);
     await this.updateRefreshToken(user.id, token.refresh_token);
     return token;
+  }
+
+  async checkUserToken(userId: number, refreshToken: string) {
+    const user = await this.userService.findUserById(userId);
+    console.log("user:", user);
+    if (!user || !user.refresh_token)
+      throw new ForbiddenException('Connexion Refusée');
+    const refreshTokenMatches = await bcrypt.compare(
+      refreshToken,
+      user.refresh_token,
+    );
+    console.log(refreshTokenMatches);
+    if (refreshTokenMatches === false)
+      throw new ForbiddenException('Connexion Refusée');
+    const token = await this.getTokens(user.id, user.email);
+    await this.updateRefreshToken(user.id, token.refresh_token);
+    //valider le compte dans la database
+    return true;
   }
 
   ////// UTILS //////
