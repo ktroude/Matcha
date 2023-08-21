@@ -18,7 +18,13 @@
 <body>
     <header>
 		<button class="homepage_button" on:click={() => location.href = `/`}>Homepage</button>
-        <button class="login">Log in</button>
+        <button class="profile_button"  on:click={() => location.href = `/profile`}>Profile</button>
+        <button class="search_button"   on:click={() => location.href = `/search`}>Search</button>
+        {#if logged == true}
+            <button class="login_logout_button">Log in</button>
+        {:else}
+            <button class="login_logout_button">Log out</button>
+        {/if}
     </header>
     <div class="title_box">
         <div class="title">matcha</div>
@@ -26,18 +32,51 @@
     </div>
     <div class="swipe_box">
 		<div class="swipe_user">
-			<div class="picture_user">
-		</div>
-
-		</div>
-		<div class="swipe_buttons_box">
-			<button class="swipe_button">❌</button>
-			<button class="like_button">💚</button>
+			<div id="picture_user" class="picture_user">
+		    </div>
+            <div class="swipe_user_info">
+                <div class="swipe_user_name">
+                        {swipe_user_name}
+                </div>
+                <div class="swipe_user_age">
+                        {swipe_user_age}
+                </div>
+                <div class="swipe_user_gender">
+                        {swipe_user_gender}
+                </div>
+            </div>
+            <div class="swipe_buttons_box">
+                <button class="swipe_button" on:click={swipe_user_left}>✕</button>
+                <button class="like_button"  on:click={swipe_user_right}>🤍</button>
+            </div>
 		</div>
     </div>
 </body>
 </html>
 
 <script lang="ts" type="module">
+
+    let logged = false;
+    let swipe_user_name = "Bouftou Royal";
+    let swipe_user_age = 30;
+    let swipe_user_gender = "♂";
+
+    function swipe_user_right() {
+		const div1 = document.getElementById('picture_user');
+        
+		div1?.classList.toggle('picture_user_switch_right');
+        swipe_user_name = "Tofu Royal";
+        swipe_user_age = 20;
+        setTimeout(() => { div1?.classList.toggle('picture_user'); }, 10000);
+	}
+    
+    function swipe_user_left() {
+        const div1 = document.getElementById('picture_user');
+
+        div1?.classList.toggle('picture_user_switch_left');
+        swipe_user_name = "Tofu Royal";
+        swipe_user_age = 20;
+        setTimeout(() => { div1?.classList.toggle('picture_user'); }, 10000);
+	}
 
 </script>
