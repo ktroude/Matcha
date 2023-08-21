@@ -7,6 +7,5 @@ import { FileValidationPipe } from './picture.validation.service';
     imports: [],
     controllers: [PictureController],
     providers: [PictureService, FileValidationPipe],
-    
 })
 export class PictureModule {}

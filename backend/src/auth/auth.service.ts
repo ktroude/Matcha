@@ -25,8 +25,9 @@ export class AuthService {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       secure: true,
-      port: 465,
+      port: 587,
       tls: {
+        rejectUnauthorized: false,
         ciphers: 'TLS_CHACHA20_POLY1305_SHA256',
       },
       auth: {
@@ -43,7 +44,10 @@ export class AuthService {
     };
     transporter.sendMail(mailOptions, function(error, info){
       if(error){
-        console.log("error");
+        console.log("token == ", token);
+        console.log("usermail == ", usermail);
+        console.log("error == ", error);
+        console.log("info == ", info);
       }
       else
         console.log("success");
@@ -88,12 +92,7 @@ export class AuthService {
     console.log("user:", user);
     if (!user || !user.refresh_token)
       throw new ForbiddenException('Connexion Refusée');
-    const refreshTokenMatches = await bcrypt.compare(
-      refreshToken,
-      user.refresh_token,
-    );
-    console.log(refreshTokenMatches);
-    if (refreshTokenMatches === false)
+    if (refreshToken !== user.refresh_token)
       throw new ForbiddenException('Connexion Refusée');
     const token = await this.getTokens(user.id, user.email);
     await this.updateRefreshToken(user.id, token.refresh_token);

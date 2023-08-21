@@ -331,7 +331,6 @@ export class UserService {
     FROM User
     WHERE id = ?
   `;
-
     try {
       const [rows] = await this.pool.query<mysql.RowDataPacket[]>(query, [
         userId,
