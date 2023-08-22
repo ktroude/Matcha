@@ -45,15 +45,9 @@
 		    if (response.status === 409) 
       		inputError = responseBody.message;
         console.log("Failed to create user.");
-      } else {
-        console.log(document?.cookie?.split(";"));
-        console.log("User created successfully.");
-        newUserName = "";
-        newLastName = "";
-        newFirstName = "";
-        newEmail = "";
-        newPassword = "";
-      }
+	}
+	else window.location.href = '/complete/profile';
+
     } catch (error) {
       console.error("An error occurred:", error);
     }

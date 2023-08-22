@@ -49,6 +49,9 @@ async function connexion() {
         console.log(response);
 }
 
+function redirect() {
+    window.location.href = '/complete/profile';
+}
 
 </script>
 
@@ -57,7 +60,7 @@ async function connexion() {
     <input type="text" bind:value={username}>
     <input type="text"  bind:value={password}>
     <button on:click={connexion}>connexion</button>
-
+    <button on:click={redirect}> test redirection</button>
     <button on:click={getId}> test </button>
     <h1>id == {id}</h1>
 </body>
