@@ -89,20 +89,7 @@ body {
   outline: none;
 }
 
-header {
-  display: flex;
-  flex-direction: row;
-  top: 0px;
-  height: 40px;
-  width: 100vw;
-  -webkit-backdrop-filter: blur(2px);
-  -webkit-backdrop-filter-backdrop-filter: blur(2px);
-  color: white;
-  justify-content: center;
-  text-align: right;
-}
-
-.login {
+.login_logout_button {
   display: relative;
   cursor: pointer;
   background: none;
@@ -116,7 +103,7 @@ header {
   font-family: "Righteous", cursive;
 }
 
-.login:hover {
+.login_logout_button:hover {
   scale: 1.2;
   color: white;
   transition: all 0.15s ease-in-out;

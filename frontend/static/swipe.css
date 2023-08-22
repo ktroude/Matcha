@@ -1,8 +1,8 @@
 .swipe_box {
   border-radius: 20px;
   margin: auto;
-  width: 600px;
-  height: 850px;
+  width: 800px;
+  height: 900px;
   color: white;
   font-size: 40px;
   display: flex;
@@ -15,7 +15,7 @@
   border-radius: 20px;
   margin: auto;
   width: 500px;
-  height: 600px;
+  height: 650px;
   background-color: rgba(22, 22, 22, 0.396);
   -webkit-backdrop-filter: blur(2px);
   -webkit-backdrop-filter-backdrop-filter: blur(2px);
@@ -27,13 +27,15 @@
   justify-content: center;
   box-shadow: rgba(255, 66, 233, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
   transition: all 0.15s ease-in-out;
+  overflow: hidden;
 }
 
 .picture_user {
+  margin-top: 20px;
   border-radius: 20px;
-  width: 400px;
-  height: 400px;
-  background-color: white;
+  width: 450px;
+  height: 450px;
+  background-color: rgba(22, 22, 22, 0.396);
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
   color: white;
@@ -46,7 +48,65 @@
   transition: all 0.15s ease-in-out;
 }
 
+.picture_user_switch_right {
+  animation: swiped_right 0.5s ease-in-out;
+}
+
+@keyframes swiped_right {
+  0% {
+    transform: translateX(0px);
+  }
+  100% {
+    transform: rotate(20deg);
+    transform: translateX(500px);
+  }
+}
+.picture_user_switch_left {
+  animation: swiped_left 0.5s ease-in-out;
+}
+
+@keyframes swiped_left {
+  0% {
+    transform: translateX(0px);
+  }
+  100% {
+    transform: rotate(20deg);
+    transform: translateX(-500px);
+  }
+}
+.swipe_user_info {
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.swipe_user_name {
+  font-color: white;
+  font-size: 30px;
+  text-align: left;
+}
+
+.swipe_user_age {
+  font-color: white;
+  font-size: 25px;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.swipe_user_gender {
+  padding-left: 10px;
+  font-color: white;
+  font-size: 25px;
+  text-align: left;
+}
+
 .swipe_buttons_box {
+  width: 200px;
+  height: 100px;
+  margin-top: auto;
   display: flex;
   flex-direction: row;
   align-content: space-between;
@@ -56,17 +116,17 @@
 
 .swipe_button {
   border-radius: 100%;
-  font-size: 30px;
+  font-size: 45px;
   width: 60px;
   height: 60px;
-  color: red;
-  background-color: rgba(22, 22, 22, 0.396);
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
+  color: white;
+  background: none;
+  background-color: none;
   border: none;
   margin-right: 30px;
   transition: transform 0.3s;
   transform: scale(1.2);
+  text-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2);
 }
 .swipe_button:hover {
   cursor: pointer;
@@ -74,18 +134,18 @@
 }
 
 .like_button {
-  font-size: 30px;
+  font-size: 40px;
   width: 60px;
   height: 60px;
   border-radius: 100%;
-  background-color: rgba(22, 22, 22, 0.396);
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
+  background: none;
+  background-color: none;
   border: none;
   color: limegreen;
   margin-left: 30px;
   transform: scale(1.2);
   transition: transform 0.3s;
+  text-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2);
 }
 .like_button:hover {
   cursor: pointer;
@@ -94,13 +154,45 @@
 
 .homepage_button {
   border: none;
+  margin-left: 3px;
+  margin-right: 3px;
   background: none;
   color: white;
   color: white;
-  font-size: 16px;
+  font-size: 20px;
   transition: all 0.15s ease-in-out;
 }
 .homepage_button:hover {
   cursor: pointer;
-  transform: scale(1.5);
+  scale: 1.2;
+}
+
+.profile_button {
+  border: none;
+  margin-left: 3px;
+  margin-right: 3px;
+  background: none;
+  color: white;
+  color: white;
+  font-size: 20px;
+  transition: all 0.15s ease-in-out;
+}
+.profile_button:hover {
+  cursor: pointer;
+  scale: 1.2;
+}
+
+.search_button {
+  border: none;
+  margin-left: 3px;
+  margin-right: 3px;
+  background: none;
+  color: white;
+  color: white;
+  font-size: 20px;
+  transition: all 0.15s ease-in-out;
+}
+.search_button:hover {
+  cursor: pointer;
+  scale: 1.2;
 }/*# sourceMappingURL=swipe.css.map */
