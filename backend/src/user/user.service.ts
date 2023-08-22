@@ -1,7 +1,12 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
 import * as bcrypt from 'bcrypt';
 import { UserValidationService } from './user.validation.service';
+import { error } from 'console';
 
 @Injectable()
 export class UserService {
@@ -27,23 +32,19 @@ export class UserService {
     username: string,
     password: string,
   ): Promise<mysql.RowDataPacket | null> {
-    console.log("creating user...");
-    console.log(firstname);
-    console.log(lastname);
-    console.log(email);
-    console.log(username);
-    console.log(password);
     if (
       this.validation.name(firstname) > 0 ||
       this.validation.name(lastname) > 0 ||
       this.validation.email(email) > 0 ||
       this.validation.name(username) > 0 ||
       this.validation.password(password) > 0
-    ) {
-      console.log('validation error');
-      return null;
-    }
-    console.log("user created...");
+    )
+      throw new ForbiddenException('input error detected');
+
+    if (await this.isEmailAlreadyExist(email))
+      throw new ConflictException('This email address is already taken');
+    if (await this.isUsernameAlreadyExist(username))
+      throw new ConflictException('This username is already taken');
 
     const cryptedPassword: string = bcrypt.hashSync(password, 10);
     const insertDataQuery = `
@@ -58,12 +59,11 @@ export class UserService {
         username,
         cryptedPassword,
       ]);
-      console.log('Données insérées avec succès !');
       const user = await this.findUserByEmail(email);
       return user;
     } catch (err) {
-      console.error('Erreur lors de la creation du user: ', username, err);
-      return null;
+      console.log('erreur : ', err);
+      throw new ForbiddenException('error detected');
     }
   }
 
@@ -342,6 +342,40 @@ export class UserService {
         userId,
         err,
       );
+      return null;
+    }
+  }
+
+  async isUsernameAlreadyExist(username: string) {
+    const query = `
+    SELECT *
+    FROM User
+    WHERE username = ?
+  `;
+    try {
+      const [rows] = await this.pool.query<mysql.RowDataPacket[]>(query, [
+        username,
+      ]);
+      return rows.length > 0 ? rows[0] : null;
+    } catch (err) {
+      console.error('Erreur', err);
+      return null;
+    }
+  }
+
+  async isEmailAlreadyExist(email: string) {
+    const query = `
+    SELECT *
+    FROM User
+    WHERE email = ?
+  `;
+    try {
+      const [rows] = await this.pool.query<mysql.RowDataPacket[]>(query, [
+        email,
+      ]);
+      return rows.length > 0 ? rows[0] : null;
+    } catch (err) {
+      console.error('Erreur', err);
       return null;
     }
   }

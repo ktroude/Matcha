@@ -121,3 +121,9 @@ header {
   color: white;
   transition: all 0.15s ease-in-out;
 }/*# sourceMappingURL=homepage.css.map */
+
+.input_error {
+  font-size: 20px;
+  font-family: "Caprasimo", cursive;
+  color: crimson;
+}
