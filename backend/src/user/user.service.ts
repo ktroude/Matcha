@@ -335,6 +335,7 @@ export class UserService {
       const [rows] = await this.pool.query<mysql.RowDataPacket[]>(query, [
         userId,
       ]);
+      console.log(rows[0]);
       return rows.length > 0 ? rows[0] : null;
     } catch (err) {
       console.error(

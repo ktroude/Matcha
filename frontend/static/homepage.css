@@ -1,7 +1,7 @@
 body {
   width: 100vw;
   height: 100vh;
-  background: radial-gradient(circle, rgb(143, 47, 208) 0%, rgb(0, 0, 60) 92%);
+  background: radial-gradient(circle, #8f2fd0 0%, rgb(0, 0, 60) 92%);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -55,8 +55,8 @@ body {
 
 .box:hover {
   border-radius: 60px;
-  border: 5px solid rgb(255, 64, 220);
-  box-shadow: rgba(255, 66, 233, 0.3) 5px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+  border: 5px solid #ff40dc;
+  box-shadow: #ff42e94d 5px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
 
 .box_questions {
