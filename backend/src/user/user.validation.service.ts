@@ -114,4 +114,16 @@ export class UserValidationService {
       return 1;
     }
   }
+
+  birthdate(date: string): number {
+    if (!date) return 1;
+    if (date.length < 5 || date.length > 12) return 2;
+    for (let i = 0; i < date.length; i++) {
+      const char = date[i];
+      if (!/[0-9-]/.test(char)) {
+        return 3;
+      }
+    }
+    return 0;
+  }
 }

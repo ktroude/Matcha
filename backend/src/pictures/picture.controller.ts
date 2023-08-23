@@ -27,7 +27,6 @@ export class PictureController {
     @GetCurrentUserId() userId: number,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    console.log('debut de la ft');
     return await this.pictureService.uploadFiles(files, userId);
   }
 

@@ -40,6 +40,7 @@ export class DatabaseService {
     password      VARCHAR(255) NOT NULL,
     refresh_token VARCHAR(255),
     registered    BOOLEAN NOT NULL DEFAULT FALSE,
+    birthdate     VARCHAR(55),
     gender        VARCHAR(10),
     sexualPref    JSON,
     biography     TEXT,

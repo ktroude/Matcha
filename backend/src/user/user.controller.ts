@@ -94,4 +94,13 @@ export class UserController {
   ) {
     return await this.userService.updateUsername(userId, username);
   }
+
+    @Post('update/birthdate')
+  @HttpCode(HttpStatus.OK)
+  async updateBirthdate(
+    @GetCurrentUserId() userId: number,
+    @Body('birthdate') date: string,
+  ) {
+    return await this.userService.updateBirthdate(userId, date);
+  }
 }

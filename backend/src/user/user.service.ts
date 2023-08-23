@@ -232,6 +232,30 @@ export class UserService {
     }
   }
 
+    async updateBirthdate(userId: number, birthdate: string) {
+    if (this.validation.birthdate(birthdate) > 0)
+      throw new ForbiddenException('Birthdate invalide');
+    const updateDataQuery = `
+      UPDATE User
+      SET birthdate = ?
+      WHERE id = ?
+      `;
+
+    try {
+      await this.pool.query(updateDataQuery, [birthdate, userId]);
+      console.log('birthdate ', birthdate, ' modifié!');
+    } catch (err) {
+      console.error(
+        'Erreur lors de la modification du birthdate : ',
+        birthdate,
+        err,
+      );
+      throw new ForbiddenException(
+        'Utilisateur introuvable ou username deja pris',
+      );
+    }
+  }
+
   async updateBio(userId: number, bio: string) {
     if (this.validation.biography(bio) > 0)
       throw new ForbiddenException('Bio invalide');

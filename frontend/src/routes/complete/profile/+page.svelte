@@ -2,8 +2,10 @@
   let counter: number = 0;
   let selectedGender: string = "";
   let selectedPref: string[] = []; // Un tableau pour stocker les genres sélectionnés
+  let birthdate: string = "";
   let uploadedImages = new Array(5).fill(null); // Tableau pour stocker les images
   let currentImageIndex = 0; // Index de l'image en cours d'upload
+  let bio = "";
 
   function counterUp() {
     console.log(counter);
@@ -22,6 +24,10 @@
       // Sinon, l'ajouter à la liste
       selectedPref = [...selectedPref, gender];
     }
+  }
+
+  function handleDateChange(event: any) {
+    birthdate = event.target.value;
   }
 
   function handleFileInputChange(event: Event) {
@@ -45,6 +51,84 @@
       }
     };
     reader.readAsDataURL(file);
+  }
+
+  async function sendUserData() {
+    if (selectedGender && selectedGender.length) {
+      try {
+        console.log("fecthing");
+        await fetch(`http://localhost:3000/user/update/gender`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ gender: selectedGender }),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (selectedPref && selectedPref.length) {
+      try {
+        console.log("fecthing");
+        await fetch(`http://localhost:3000/user/update/pref`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ pref: selectedPref }),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (birthdate && birthdate.length) {
+      try {
+        console.log("fecthing");
+        await fetch(`http://localhost:3000/user/update/birthdate`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ birthdate: birthdate }),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (uploadedImages && uploadedImages[0]) {
+      try {
+        console.log("fecthing");
+        await fetch(`http://localhost:3000/picture/upload`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ selectedGender: selectedGender }),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (bio && bio.length) {
+      try {
+        console.log("fecthing");
+        await fetch(`http://localhost:3000/user/update/bio`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ bio: bio }),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
   }
 </script>
 
@@ -152,8 +236,12 @@
                     name="birthdate"
                     class="birthday_input"
                     value="2000-01-01"
+                    min="1900-01-01"
+                    max="2005-01-01"
+                    on:input={handleDateChange}
                   />
                 </p>
+                {birthdate}
               </form>
             </div>
           {/if}
@@ -177,6 +265,36 @@
               {/each}
             </div>
           {/if}
+          {#if counter === 3}
+            <div class="box_title">
+              Let other user know you, type your biography
+            </div>
+            <div class="bio_box">
+              <div class="bio_input_box">
+                <textarea
+                  class="bio_input"
+                  placeholder="Maximum 300 caractères..."
+                  bind:value={bio}
+                />
+                {#if bio.length <= 300}
+                  <p style="color: rgba(255, 64, 220, 0.3); font-size: 12px">
+                    {bio.length} / 300
+                  </p>
+                {:else}
+                  <p style="color: crimson; font-size: 14px">
+                    {bio.length} / 300
+                  </p>
+                {/if}
+              </div>
+            </div>
+          {/if}
+          {#if counter === 4}
+            <div class="box_title">I'm looking for people from</div>
+            <div class="search_box" />
+          {/if}
+          {#if counter === 5}
+            <button> Get started !</button>
+          {/if}
         </div>
         <div class="button_box">
           {#if counter === 0}
@@ -185,7 +303,10 @@
           {:else}
             <button class="back_button" on:click={counterDown}>Back</button>
           {/if}
-          <button class="next_button" on:click={counterUp}>Next</button>
+
+          {#if bio.length <= 300 && counter < 5}
+            <button class="next_button" on:click={counterUp}>Next</button>
+          {/if}
         </div>
       </div>
     </div></body
