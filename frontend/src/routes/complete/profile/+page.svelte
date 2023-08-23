@@ -2,14 +2,16 @@
   let counter: number = 0;
   let selectedGender: string = "";
   let selectedPref: string[] = []; // Un tableau pour stocker les genres sélectionnés
+  let uploadedImages = new Array(5).fill(null); // Tableau pour stocker les images
+  let currentImageIndex = 0; // Index de l'image en cours d'upload
 
   function counterUp() {
-    counter++;
+    console.log(counter);
+    counter += 1;
   }
 
   function counterDown() {
-    if (counter <= 0) return;
-    counter--;
+    if (counter > 0) counter -= 1;
   }
 
   function toggleSexPref(gender: string) {
@@ -20,6 +22,29 @@
       // Sinon, l'ajouter à la liste
       selectedPref = [...selectedPref, gender];
     }
+  }
+
+  function handleFileInputChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files) {
+      return;
+    }
+    const file = input.files[0];
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string | null;
+      if (result) {
+        uploadedImages[currentImageIndex] = result;
+        currentImageIndex++;
+        if (currentImageIndex >= 5) {
+          currentImageIndex = 0;
+        }
+      }
+    };
+    reader.readAsDataURL(file);
   }
 </script>
 
@@ -114,6 +139,42 @@
                 on:change={() => toggleSexPref("O")}
               />
               <label for="other">Other</label>
+            </div>
+          {/if}
+          {#if counter === 1}
+            <div class="birthday_box">
+              <form>
+                <label class="birthday_label" for="birthdate">Birthdate</label>
+                <p>
+                  <input
+                    type="date"
+                    id="birthdate"
+                    name="birthdate"
+                    class="birthday_input"
+                    value="2000-01-01"
+                  />
+                </p>
+              </form>
+            </div>
+          {/if}
+          {#if counter === 2}
+            <div class="box_title">Upload some pictures</div>
+            <div class="picture_box">
+              {#each uploadedImages as image, index (index)}
+                {#if image !== null}
+                  <img class="picture_preview" src={image} alt="uploaded" />
+                {:else}
+                  <label class="upload_button">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style="display: none;"
+                      on:change={handleFileInputChange}
+                    />
+                    <span>+</span>
+                  </label>
+                {/if}
+              {/each}
             </div>
           {/if}
         </div>
