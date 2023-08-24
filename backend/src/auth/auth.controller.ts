@@ -21,7 +21,7 @@ export class AuthController {
   @Public()
   @Post('local/signup')
   @HttpCode(HttpStatus.CREATED)
-  async signUpLocal(@Body('user') dto: LocalSignUpDto, @Res() res) {
+  async signUpLocal(@Body() dto: LocalSignUpDto, @Res() res) {
     const tokens = await this.authService.signUpLocal(dto);
     if (tokens) {
       res.cookie('access_token', tokens.access_token, {
@@ -66,7 +66,7 @@ export class AuthController {
         httpOnly: true,
       });
       res.end();
-    } else throw new ForbiddenException('Connexion Refusée');
+    } else throw new ForbiddenException('Connexion Refusée et ouais frr');
     return null;
   }
 

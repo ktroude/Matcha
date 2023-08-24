@@ -2,7 +2,6 @@ body {
   width: 100vw;
   height: 100vh;
   background: radial-gradient(circle, rgb(143, 47, 208) 0%, rgb(0, 0, 60) 92%);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,6 +66,11 @@ body {
   margin-top: 40px;
 }
 
+.box_title_picture{
+  font-size: 25px;
+  margin-top: 20px;
+}
+
 .inside_box {
   width: 100%;
   height: 80%;
@@ -76,16 +80,19 @@ body {
   width: 60px;
   height: 40px;
   margin-right: 20px;
+  cursor: pointer;
 }
 
 .back_button {
   width: 60px;
   height: 40px;
   margin-left: 20px;
+  cursor: pointer;
 }
 
 .button_box {
-  height: 20%;
+  background-color: transparent;
+  height: 12%;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -170,7 +177,7 @@ input[type="checkbox"].gender_input:checked + label {
 }
 
 .picture_box {
-  margin-top: 40px;
+  margin-top: 20px;
   height: auto;
   width: 100%;
   display: flex;
@@ -209,6 +216,31 @@ input[type="checkbox"].gender_input:checked + label {
   justify-content: center;
   margin-left: 0.8%;
   margin-right: 0.8%;
+}
+
+.select_profile_picture{
+  height: 10%;
+  width: 21.5%;
+  background-color: transparent;
+  display: flex; 
+  flex-direction: column;
+  font-size: 16px;
+}
+
+.clear_button{
+  border-radius: 5px;
+  border: none;
+  height: 10%;
+  width: 130px;
+  cursor: pointer;
+  background-color: #6c757d;
+  color: #fff;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.clear_button:hover{
+  color: crimson;
 }
 
 .bio_box{

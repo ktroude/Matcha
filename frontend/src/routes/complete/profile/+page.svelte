@@ -53,6 +53,12 @@
     reader.readAsDataURL(file);
   }
 
+  function clearUploadedImages() {
+    for (let i=0; i<uploadedImages.length; i++)
+    uploadedImages[i] = null;
+  currentImageIndex = 0;
+}
+
   async function sendUserData() {
     if (selectedGender && selectedGender.length) {
       try {
@@ -246,7 +252,11 @@
             </div>
           {/if}
           {#if counter === 2}
-            <div class="box_title">Upload some pictures</div>
+            <div class="box_title_picture">Upload some pictures</div>
+            <div class="select_profile_picture">
+             <p>&#x1F451; </p>
+              <p>Profile Picture</p>
+            </div>
             <div class="picture_box">
               {#each uploadedImages as image, index (index)}
                 {#if image !== null}
@@ -264,6 +274,7 @@
                 {/if}
               {/each}
             </div>
+            <button class="clear_button" on:click={clearUploadedImages}>Clear pictures</button>
           {/if}
           {#if counter === 3}
             <div class="box_title">

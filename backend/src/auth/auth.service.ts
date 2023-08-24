@@ -11,12 +11,16 @@ export class AuthService {
   constructor(private jwt: JwtService, private userService: UserService) {}
 
   async signInLocal(dto: LocalSignInDto): Promise<Tokens | null> {
+    console.log("les dto == ", dto);
     const user = await this.userService.findUserByUsername(dto.username);
+    console.log("user ==", user);
     if (!user) return null; // mauvais pseudo
     const passwordMatches = await bcrypt.compare(dto.password, user.password);
+    console.log("match == ", passwordMatches)
     if (passwordMatches === false) return null; // mauvais mot de passe
-    const token = await this.getTokens(user.id, user.email);
-    await this.updateRefreshToken(user.id, token.refresh_token);
+    let token = await this.getTokens(user.id, user.email);
+    token.refresh_token = await this.updateRefreshToken(user.id, token.refresh_token);
+    console.log
     return token;
   }
 
@@ -82,8 +86,8 @@ export class AuthService {
     );
     if (refreshTokenMatches === false)
       throw new ForbiddenException('Connexion Refusée');
-    const token = await this.getTokens(user.id, user.email);
-    await this.updateRefreshToken(user.id, token.refresh_token);
+    let token = await this.getTokens(user.id, user.email);
+    token.refresh_token = await this.updateRefreshToken(user.id, token.refresh_token);
     return token;
   }
 
@@ -105,6 +109,7 @@ export class AuthService {
   async updateRefreshToken(userId: number, refreshToken: string) {
     const hash = bcrypt.hashSync(refreshToken, 10);
     await this.userService.updateRefreshToken(userId, hash);
+    return hash;
   }
 
   async getTokens(userId: number, email: string): Promise<Tokens> {
