@@ -22,11 +22,34 @@
     <div class="title_box">
         <div class="title">matcha</div>
         <div class="subtitle">Savor the taste of <span style="color:rgb(242, 0, 255)">love</span> with Matcha! ♥</div>
+        {id}
     </div>
 
 </body>
 </html>
 
 <script lang="ts" type="module">
+    import { onMount } from "svelte";
+
+    let id:any;
+
+    async function getId() {
+            const response = await fetch(`http://localhost:3000/user/me`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                });
+                if (response.ok)
+                id = await response.text()
+                else id = 0;
+                console.log(response);
+        }
+
+    onMount(async () => {
+        await getId();
+	});
+
 
 </script>

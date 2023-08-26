@@ -16,23 +16,23 @@
     <title>Matcha</title>
 </head>
 <body>
-    <header>
-
-        <button class="login">Log in</button>
-    </header>
     <div class="title_box">
         <div class="title">matcha</div>
-        <div class="subtitle">Savor the taste of <span style="color:rgb(242, 0, 255)">love</span> with Matcha! ♥</div>
+        <div class="subtitle">You're almost <span style="color:rgb(242, 0, 255)">done</span>!</div>
     </div>
-    <div class="box">
-		<button type="button" class="create_user">Validate account</button>
-    </div>
+		<button class="button_validate_account" on:click={switchToCompleteProfile}>Validate account</button>
 </body>
 </html>
 
 <script lang="ts" type="module">
     import { onMount } from "svelte";
+	import { goto } from '$app/navigation';
 
+
+	const switchToCompleteProfile = () => {
+
+    	goto('complete/profile');
+  };
 
 	function getTokenFromURL() {
 		const urlParams = new URLSearchParams(window.location.search);

@@ -1,10 +1,39 @@
 <script lang="ts" type="module">
+
+  import { fly } from 'svelte/transition'
+  import { backOut } from 'svelte/easing'
+  import { fade } from 'svelte/transition';
+  import { onMount } from "svelte";
+
+  const lines = [
+    'Savor',
+    '',
+    'the',
+    '',
+    'taste',
+    '',
+    'of',
+    '',
+    'love',
+    '',
+    'with',
+    '',
+    'Matcha!'
+  ]
+
+  let animate = false
+
   let newUserName: string,
     newLastName: string,
     newFirstName: string,
     newEmail: string,
     newPassword: string,
     inputError: string;
+
+
+  onMount(async () => {
+    animate = true
+	});
 
   async function createUser() {
     let user = {
@@ -125,49 +154,76 @@
     />
     <title>Matcha</title>
   </head>
+
   <body>
     <header>
       <button class="login">Log in</button>
+      <button class="button_nav" on:click={() => (location.href = `/swipe`)}
+        >Swipe Page</button
+      >
     </header>
     <div class="title_box">
       <div class="title">matcha</div>
-      <div class="subtitle">
-        Savor the taste of <span style="color:rgb(242, 0, 255)">love</span> with
-        Matcha! ♥
+      <div>
       </div>
+      {#if animate}
+        <div class="lines">
+              <div class="subtitle">
+                <span style="display: inline-block"  transition:fly={{delay:100, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>Savor</span>
+                <span style="display: inline-block"  transition:fly={{delay:150, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>the</span>
+                <span style="display: inline-block"  transition:fly={{delay:200, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>taste</span>
+                <span style="display: inline-block"  transition:fly={{delay:250, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>of</span>
+                <span style="color:rgb(242, 0, 255); display: inline-block"  transition:fly={{delay:300, duration: 600, y: 400, opacity: 0.5, easing: backOut }}>love</span>
+                <span style="display: inline-block"  transition:fly={{delay:350, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>with</span>
+                <span style="display: inline-block"  transition:fly={{delay:400, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>Matcha</span>
+                <span style="display: inline-block"  transition:fly={{delay:450, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>!</span>
+                <span style="color:rgb(242, 0, 255); display: inline-block"  transition:fly={{delay:1000, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>♥</span>
+              </div>
+        </div>
+      {/if}
     </div>
     <div class="box">
       <h3 class="box_questions">
-        It all starts with <span style="color:rgb(242, 0, 255)">you</span>.
+        Tell us more about <span style="color:rgb(242, 0, 255)">you</span>!
       </h3>
       <input
         type="text"
+        autocomplete="off"
         id="userName"
-        placeholder="User name:"
+        placeholder="User name"
+        class="input_homepage"
         bind:value={newUserName}
-      />
-      <input
+        />
+        <input
         type="text"
+        autocomplete="off"
         id="lastName"
-        placeholder="Last name:"
+        placeholder="Last name"
+        class="input_homepage"
         bind:value={newLastName}
-      />
-      <input
+        />
+        <input
         type="text"
+        autocomplete="off"
         id="firstName"
-        placeholder="First name:"
+        placeholder="First name"
+        class="input_homepage"
         bind:value={newFirstName}
-      />
-      <input
+        />
+        <input
         type="email"
+        autocomplete="off"
         id="email"
-        placeholder="Email:"
+        placeholder="Email"
+        class="input_homepage"
         bind:value={newEmail}
       />
       <input
         type="password"
+        autocomplete="off"
         id="password"
-        placeholder="Password:"
+        placeholder="Password"
+        class="input_homepage"
         bind:value={newPassword}
       />
       {#if inputError && inputError !== "ok"}
@@ -175,9 +231,7 @@
       <button type="button" class="create_user" on:click={createUser}
         >Create User</button
       >
-      <button class="button_nav" on:click={() => (location.href = `/swipe`)}
-        >Swipe Page</button
-      >
+
     </div>
   </body>
 </html>
