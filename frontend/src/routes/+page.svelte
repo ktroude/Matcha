@@ -2,24 +2,7 @@
 
   import { fly } from 'svelte/transition'
   import { backOut } from 'svelte/easing'
-  import { fade } from 'svelte/transition';
   import { onMount } from "svelte";
-
-  const lines = [
-    'Savor',
-    '',
-    'the',
-    '',
-    'taste',
-    '',
-    'of',
-    '',
-    'love',
-    '',
-    'with',
-    '',
-    'Matcha!'
-  ]
 
   let animate = false
 
@@ -43,6 +26,9 @@
       username: newUserName,
       password: newPassword,
     };
+    inputError = checkName(user.username, "username");
+    console.log(inputError);
+    if (inputError !== "ok") return;
     inputError = checkName(user.lastname, "lastname");
     console.log(inputError);
     if (inputError !== "ok") return;
@@ -50,9 +36,6 @@
     console.log(inputError);
     if (inputError !== "ok") return;
     inputError = checkEmail(user.email);
-    console.log(inputError);
-    if (inputError !== "ok") return;
-    inputError = checkName(user.username, "username");
     console.log(inputError);
     if (inputError !== "ok") return;
     inputError = checkPassword(user.password);
@@ -66,7 +49,7 @@
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user: user }),
+        body: JSON.stringify(user),
       });
 
       if (!response.ok) {
@@ -157,10 +140,7 @@
 
   <body>
     <header>
-      <button class="login">Log in</button>
-      <button class="button_nav" on:click={() => (location.href = `/swipe`)}
-        >Swipe Page</button
-      >
+      <button class="login_logout_button" on:click={() => (location.href = `/login`)}>Log in</button>
     </header>
     <div class="title_box">
       <div class="title">matcha</div>
@@ -177,14 +157,15 @@
                 <span style="display: inline-block"  transition:fly={{delay:350, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>with</span>
                 <span style="display: inline-block"  transition:fly={{delay:400, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>Matcha</span>
                 <span style="display: inline-block"  transition:fly={{delay:450, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>!</span>
-                <span style="color:rgb(242, 0, 255); display: inline-block"  transition:fly={{delay:1000, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>♥</span>
+                <span class="heart" style="color:rgb(242, 0, 255); display: inline-block"  transition:fly={{delay:1000, duration: 600, y: 350, opacity: 0.5, easing: backOut }}>♥</span>
               </div>
         </div>
       {/if}
     </div>
     <div class="box">
       <h3 class="box_questions">
-        Tell us more about <span style="color:rgb(242, 0, 255)">you</span>!
+        Tell us more about 
+        <span style="color:rgb(242, 0, 255)">you</span>!
       </h3>
       <input
         type="text"
@@ -227,9 +208,13 @@
         bind:value={newPassword}
       />
       {#if inputError && inputError !== "ok"}
-        <p class="input_error">{inputError}</p>{/if}
+        <p class="input_error">{inputError}</p>
+        {:else}
+        <p class="input_error"></p>
+      {/if}
+      
       <button type="button" class="create_user" on:click={createUser}
-        >Create User</button
+        >Validate</button
       >
 
     </div>

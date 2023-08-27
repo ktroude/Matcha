@@ -28,7 +28,6 @@
     </header>
     <div class="title_box">
         <div class="title">matcha</div>
-        <div class="subtitle">Savor the taste of <span style="color:rgb(242, 0, 255)">love</span> with Matcha! ♥</div>
     </div>
     <div class="swipe_box">
 		<div class="swipe_user">

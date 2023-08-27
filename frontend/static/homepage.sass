@@ -82,35 +82,35 @@ body
 .input:focus
     outline: none
 
-// .header
-//   display: flex
-//   flex-direction: row
-//   top: 0px
-//   height: 40px
-//   width: 100vw
-//   -webkit-backdrop-filter: blur(2px)
-//           backdrop-filter: blur(2px)
-//   color: white
-//   justify-content: center
-//   text-align: right
+header
+  display: flex
+  flex-direction: row
+  top: 0px
+  width: 100vw
+  justify-content: right
+  text-align: right
 
 .login_logout_button
-    display: relative
     cursor: pointer
-    background: none
+    background-color: rgba(22, 22, 22, 0.396)
+    -webkit-backdrop-filter: blur(2px)
+    backdrop-filter: blur(2px)
+    padding: 10px
     outline: none
     border: none
+    border-radius: 5px
     color: white
     font-size: 20px
-    right: 0
-    margin-left: auto
-    margin-right: 30px
     font-family: "Righteous", cursive
+    margin: 5px
+    
 
 .login_logout_button:hover
-    scale: 1.2
     color: white
-    transition: all 0.15s ease-in-out
+    transition: all 0.25s ease-in-out
+    color: rgb(188, 87, 255)
+    outline: 1px solid rgb(188, 87, 255)
+    text-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2)
 
 .button_validate_account
     color: white
@@ -186,3 +186,19 @@ body
         cursor: pointer
         color: rgb(188, 87, 255)
         text-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2)
+
+
+.heart
+    animation: beating 1s infinite ease-in-out
+
+@keyframes beating 
+  from
+    transform: scale(1)
+  to 
+    transform: scale(1.1)
+
+.input_error
+  height: 23px
+  font-size: 18px
+  font-color:red
+  padding: 5px
