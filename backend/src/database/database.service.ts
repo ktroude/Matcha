@@ -139,7 +139,8 @@ CREATE TABLE IF NOT EXISTS Picture (
     const createTableQuery = `
 CREATE TABLE IF NOT EXISTS SearchParam (
     id           INT PRIMARY KEY AUTO_INCREMENT,
-    position     VARCHAR(255),
+    userId       INT UNIQUE,
+    position     JSON,
     distanceMax  INT,
     gender       JSON,
     ageMin       INT,

@@ -4,13 +4,11 @@ import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 import { AccessTokenGuard } from './auth/common/guards';
-import { UpdateCookiesMiddleware } from './auth/common/middleware/updateCookies.middleware';
 
 async function bootstrap() {
   dotenv.config(); // Pour lire les variables du .env sans les dévoiler
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
-  app.use(UpdateCookiesMiddleware);
   app.use(
     cors({
       origin: ['http://localhost:8080', 'http://localhost:3000'],

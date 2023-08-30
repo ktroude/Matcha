@@ -5,7 +5,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { UserValidationService } from 'src/user/user.validation.service';
 import { AccessTokenStrategy, RefreshTokenStrategy } from './strategy';
-import { MyEventEmitter } from './common/middleware';
 
 @Module({
   imports: [JwtModule.register({})],
@@ -16,7 +15,6 @@ import { MyEventEmitter } from './common/middleware';
     UserValidationService,
     AccessTokenStrategy,
     RefreshTokenStrategy,
-    MyEventEmitter
   ],
   exports: [AuthService],
 })
