@@ -11,8 +11,8 @@ export class SearchService {
 
   constructor(
     private validation: SearchValidation,
-    private userService: UserService
-    ) {
+    private userService: UserService,
+  ) {
     this.initializePool();
   }
 
@@ -88,6 +88,8 @@ export class SearchService {
     }
   }
 
+
+  // A deplacer dans User?? A voir
   // Convertir une adresse ip en ville d'origine, puis cette ville en coordonées gps et push l'info dans la DB
   async pushLocationByIp(userId: number, userIp: string) {
     const geoip = require('geoip-lite');
@@ -101,9 +103,9 @@ export class SearchService {
       latitude: resultGPS.latitude,
     };
     const updateDataQuery = `
-      UPDATE SearchParam
+      UPDATE User
       SET position = ?
-      WHERE userId = ?
+      WHERE id = ?
       `;
 
     try {
@@ -138,13 +140,11 @@ export class SearchService {
 
       if (response.data && response.data[0]) {
         const result = response.data[0];
-        console.log('RESULT ========== ', result);
         return {
           latitude: parseFloat(result.lat),
           longitude: parseFloat(result.lon),
         };
       }
-
       return null; // Aucun résultat trouvé
     } catch (error) {
       throw new ForbiddenException(
@@ -245,7 +245,7 @@ export class SearchService {
 
       // Requete pour rechercher toutes les données des autres utilisateurs
       const allUsersQuery = `
-      SELECT *
+      SELECT id, firstName, birthdate, gender, fameRating, registered, position
       FROM User
       WHERE id != ?
     `;
@@ -283,8 +283,9 @@ export class SearchService {
     }
   }
 
-  sortArrayByFame(arrayOfUser:mysql.RowDataPacket[]){
-    arrayOfUser.sort((a, b) => a.fame - b.fame)
+  sortArrayByFame(arrayOfUser: mysql.RowDataPacket[]) {
+    if (!arrayOfUser) return null;
+    arrayOfUser.sort((a, b) => a.fame - b.fame);
     return arrayOfUser;
   }
 
@@ -293,36 +294,42 @@ export class SearchService {
     user: mysql.RowDataPacket,
     arrayOfUser: mysql.RowDataPacket[],
   ) {
+    if (!arrayOfUser) return null;
     return arrayOfUser.filter(
       (otherUserRow) => otherUserRow.myGender in user.l4Gender,
     );
   }
 
   findUserWithinAge(
-        user: mysql.RowDataPacket,
+    user: mysql.RowDataPacket,
     arrayOfUser: mysql.RowDataPacket[],
   ) {
+    if (!arrayOfUser) return null;
     for (const otherUserRow of arrayOfUser) {
-      const age = this.userService.convertBirthdayInAge(otherUserRow.birthdate)
-      if ( age < user.ageMin || age > user.ageMax)
-            arrayOfUser.splice(arrayOfUser.indexOf(otherUserRow), 1);
+      const age = this.userService.convertBirthdayInAge(otherUserRow.birthdate);
+      if (age < user.ageMin || age > user.ageMax)
+        arrayOfUser.splice(arrayOfUser.indexOf(otherUserRow), 1);
     }
     return arrayOfUser;
   }
 
-
   // L'algo de trie des utilisateurs en fonction des info du user "chercheur" dans la table SearchParam
-  async searchAlgorythm(userId:number) {
+  async searchAlgorythm(userId: number) {
     try {
       const UserFromSearchParamTable = await this.findUserById(userId);
-      let arrayOfUsers = await this.findUsersWithinDistance(UserFromSearchParamTable);
-      const userFromUserTable = await this.userService.findUserById(userId)
+      let arrayOfUsers = await this.findUsersWithinDistance(
+        UserFromSearchParamTable,
+      );
+      if (!arrayOfUsers) return null;
+      const userFromUserTable = await this.userService.findUserById(userId);
       arrayOfUsers = this.findUserWithinPref(userFromUserTable, arrayOfUsers);
-      arrayOfUsers = this.findUserWithinAge(UserFromSearchParamTable, arrayOfUsers);
+      arrayOfUsers = this.findUserWithinAge(
+        UserFromSearchParamTable,
+        arrayOfUsers,
+      );
       arrayOfUsers = this.sortArrayByFame(arrayOfUsers);
       return arrayOfUsers;
-    }
-    catch(e){
+    } catch (e) {
       console.error(e);
       return null;
     }
