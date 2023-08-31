@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
 import { SearchValidation } from './search.validation.service';
 import axios from 'axios';
-
+import * as math from 'mathjs';
 
 @Injectable()
 export class SearchService {
@@ -20,16 +20,6 @@ export class SearchService {
       database: process.env.MYSQL_DATABASE,
     });
   }
-
-  // CREATE TABLE IF NOT EXISTS SearchParam (
-  //     id           INT PRIMARY KEY AUTO_INCREMENT,
-  //     userId       INT UNIQUE,
-  //     position     VARCHAR(255),
-  //     distanceMax  INT,
-  //     gender       JSON,
-  //     ageMin       INT,
-  //     ageMax       INT
-  // );
 
   async updateMinAge(userId: number, minAge: number) {
     if (this.validation.age(minAge) > 0)
@@ -94,15 +84,18 @@ export class SearchService {
     }
   }
 
-  // Convertir une adresse ip en ville d'origine, puis cette ville en coordonées gps
-  async getLocationByIp(userId: number, userIp: string) {
+  // Convertir une adresse ip en ville d'origine, puis cette ville en coordonées gps et push l'info dans la DB
+  async pushLocationByIp(userId: number, userIp: string) {
     const geoip = require('geoip-lite');
     if (!geoip) return null;
-    const location = geoip.lookup(userIp)
+    const location = geoip.lookup(userIp);
     if (!location) return null;
     const resultGPS = await this.cityToCoordinates(location.city);
     if (!resultGPS) return null;
-    const position = { longitude: resultGPS.longitude, latitude: resultGPS.latitude };
+    const position = {
+      longitude: resultGPS.longitude,
+      latitude: resultGPS.latitude,
+    };
     const updateDataQuery = `
       UPDATE SearchParam
       SET position = ?
@@ -110,7 +103,10 @@ export class SearchService {
       `;
 
     try {
-      await this.pool.query(updateDataQuery, [JSON.stringify(position), userId]);
+      await this.pool.query(updateDataQuery, [
+        JSON.stringify(position),
+        userId,
+      ]);
     } catch (err) {
       console.error(
         'Erreur lors de la modification de la position: ',
@@ -121,29 +117,146 @@ export class SearchService {
     }
   }
 
+  async cityToCoordinates(
+    city: string,
+  ): Promise<{ latitude: number; longitude: number } | null> {
+    try {
+      const response = await axios.get(
+        'https://nominatim.openstreetmap.org/search',
+        {
+          params: {
+            q: city,
+            format: 'json',
+            limit: 1, // Limite la recherche à un résultat
+          },
+        },
+      );
 
-async cityToCoordinates(city: string): Promise<{ latitude: number; longitude: number } | null> {
-  try {
-    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
-      params: {
-        q: city,
-        format: 'json',
-        limit: 1, // Limite la recherche à un résultat
-      },
-    });
+      if (response.data && response.data[0]) {
+        const result = response.data[0];
+        console.log('RESULT ========== ', result);
+        return {
+          latitude: parseFloat(result.lat),
+          longitude: parseFloat(result.lon),
+        };
+      }
 
-    if (response.data && response.data[0]) {
-      const result = response.data[0];
-      console.log("RESULT ========== " , result)
-      return {
-        latitude: parseFloat(result.lat),
-        longitude: parseFloat(result.lon),
-      };
+      return null; // Aucun résultat trouvé
+    } catch (error) {
+      throw new ForbiddenException(
+        'Erreur lors de la conversion de la ville en coordonnées GPS.',
+      );
     }
+  }
 
-    return null; // Aucun résultat trouvé
-  } catch (error) {
-    throw new ForbiddenException('Erreur lors de la conversion de la ville en coordonnées GPS.');
+  // Recupere les coordonées GPS de deux utilisateurs et retourne la distance qui les sépare
+  async getDistance(user1: number, user2: number) {
+    // On passe les id ou le sub en parametre
+    const query = `
+    SELECT *
+    FROM SearchParam
+    WHERE userId = ? OR userId = ?
+    LIMIT 2
+  `;
+
+    try {
+      const [rows] = await this.pool.query<mysql.RowDataPacket[]>(query, [
+        user1, user2
+      ]);
+      if (rows.length != 2)
+        throw new ForbiddenException("un des utilisateur est introuvable");
+      const ptA = rows[0].position;
+      const ptB = rows[1].position;
+      return this.calculateDistance(ptA.lat, ptA.lon, ptB.lat, ptB.lon)
+  }
+  catch(e) {
+    console.error(e)
+    throw new ForbiddenException("un des utilisateur est introuvable");
+  }
+}
+
+  // Trouver la distance en km entre deux coordonées gps (lon et lat)
+  calculateDistance(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+  ): number {
+    const earthRadiusKm = 6371; // Rayon de la Terre en kilomètres
+
+    const lat1Rad = this.toRadians(lat1);
+    const lon1Rad = this.toRadians(lon1);
+    const lat2Rad = this.toRadians(lat2);
+    const lon2Rad = this.toRadians(lon2);
+
+    const dLat = lat2Rad - lat1Rad;
+    const dLon = lon2Rad - lon1Rad;
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1Rad) *
+        Math.cos(lat2Rad) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = earthRadiusKm * c; // Distance en kilomètres
+
+    return distance;
+  }
+
+  toRadians(degrees: number): number {
+    return degrees * (Math.PI / 180);
+  }
+
+  async findUsersWithinDistance(userId: number) {
+  // Requête SQL pour rechercher les données de l'utilisateur donné
+  const userQuery = `
+    SELECT *
+    FROM SearchParam
+    WHERE userId = ?
+    LIMIT 1
+  `;
+
+  try {
+    // Récupération des données de l'utilisateur donné
+    const [userRows] = await this.pool.query<mysql.RowDataPacket[]>(userQuery, [userId]);
+
+    if (userRows.length !== 1) {
+      throw new ForbiddenException("Utilisateur introuvable");
+    }
+    const userPosition = userRows[0].position;
+    const userMaxDist = userRows[0].distanceMax; 
+
+
+    // Requete pour rechercher toutes les données des autres utilisateurs
+    const allUsersQuery = `
+      SELECT *
+      FROM SearchParam
+      WHERE userId != ?
+    `;
+
+    // Récupération de toutes les données des autres utilisateurs
+    const [allUsersRows] = await this.pool.query<mysql.RowDataPacket[]>(allUsersQuery, [userId]);
+
+    // Tableau pour stocker les utilisateurs à proximité
+    const usersWithinDistance = [];
+
+    // Comparaison de la distance entre l'utilisateur donné et tous les autres utilisateurs
+    for (const otherUserRow of allUsersRows) {
+      const otherUserPosition = otherUserRow.position;
+      // Calcul de la distance entre l'utilisateur donné et l'autre utilisateur
+      const distance = this.calculateDistance(userPosition.lat, userPosition.lon, otherUserPosition.lat, otherUserPosition.lon);
+      // Si la distance est inf ou egale à la maxDist de la cible, ajouter l'utilisateur à la liste
+      if (distance <= userMaxDist) {
+        usersWithinDistance.push(otherUserRow);
+      }
+    }
+    return usersWithinDistance;
+  } catch (e) {
+    console.error(e);
+    throw new ForbiddenException("erreur lors de la recherche des utilisateurs par distance");
   }
 }
 

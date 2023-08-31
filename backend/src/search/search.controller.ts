@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { GetCurrentUserId, Public } from 'src/auth/common/decorators';
 import { SearchService } from './search.service';
 
@@ -12,5 +12,11 @@ export class SearchController {
     @Body('ip') ipAdress: string,
   ) {
     return await this.searchService.getLocationByIp(userId, ipAdress);
+  }
+
+  @Public()
+  @Get('t')
+  async ftt(){
+    return this.searchService.calculateDistance(43.65292520968345, 7.0423054283836315, 43.85129191763416, 7.269421377634613)
   }
 }
