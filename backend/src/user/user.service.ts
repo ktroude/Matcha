@@ -232,7 +232,7 @@ export class UserService {
     }
   }
 
-    async updateBirthdate(userId: number, birthdate: string) {
+  async updateBirthdate(userId: number, birthdate: string) {
     if (this.validation.birthdate(birthdate) > 0)
       throw new ForbiddenException('Birthdate invalide');
     const updateDataQuery = `
@@ -403,5 +403,18 @@ export class UserService {
       console.error('Erreur', err);
       return null;
     }
+  }
+
+  convertBirthdayInAge(birthday: string): number {
+    const today = new Date();
+    const birthdayDate = new Date(birthday);
+    let difference = today.getFullYear() - birthdayDate.getFullYear();
+    const monthDiff = today.getMonth() - birthdayDate.getMonth();
+    if (monthDiff < 0) {
+      difference--;
+    } else if (monthDiff === 0 && today.getDate() < birthdayDate.getDate()) {
+      difference--;
+    }
+    return difference;
   }
 }

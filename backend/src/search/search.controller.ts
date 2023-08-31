@@ -11,12 +11,8 @@ export class SearchController {
     @GetCurrentUserId() userId: number,
     @Body('ip') ipAdress: string,
   ) {
-    return await this.searchService.getLocationByIp(userId, ipAdress);
+    return await this.searchService.pushLocationByIp(userId, ipAdress);
   }
 
-  @Public()
-  @Get('t')
-  async ftt(){
-    return this.searchService.calculateDistance(43.65292520968345, 7.0423054283836315, 43.85129191763416, 7.269421377634613)
-  }
+
 }

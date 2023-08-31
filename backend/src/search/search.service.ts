@@ -3,12 +3,16 @@ import * as mysql from 'mysql2/promise';
 import { SearchValidation } from './search.validation.service';
 import axios from 'axios';
 import * as math from 'mathjs';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class SearchService {
   private pool: mysql.Pool;
 
-  constructor(private validation: SearchValidation) {
+  constructor(
+    private validation: SearchValidation,
+    private userService: UserService
+    ) {
     this.initializePool();
   }
 
@@ -161,19 +165,19 @@ export class SearchService {
 
     try {
       const [rows] = await this.pool.query<mysql.RowDataPacket[]>(query, [
-        user1, user2
+        user1,
+        user2,
       ]);
       if (rows.length != 2)
-        throw new ForbiddenException("un des utilisateur est introuvable");
+        throw new ForbiddenException('un des utilisateur est introuvable');
       const ptA = rows[0].position;
       const ptB = rows[1].position;
-      return this.calculateDistance(ptA.lat, ptA.lon, ptB.lat, ptB.lon)
+      return this.calculateDistance(ptA.lat, ptA.lon, ptB.lat, ptB.lon);
+    } catch (e) {
+      console.error(e);
+      throw new ForbiddenException('un des utilisateur est introuvable');
+    }
   }
-  catch(e) {
-    console.error(e)
-    throw new ForbiddenException("un des utilisateur est introuvable");
-  }
-}
 
   // Trouver la distance en km entre deux coordonées gps (lon et lat)
   calculateDistance(
@@ -210,54 +214,117 @@ export class SearchService {
     return degrees * (Math.PI / 180);
   }
 
-  async findUsersWithinDistance(userId: number) {
-  // Requête SQL pour rechercher les données de l'utilisateur donné
-  const userQuery = `
+  async findUserById(userId: number) {
+    const query = `
     SELECT *
     FROM SearchParam
     WHERE userId = ?
-    LIMIT 1
   `;
-
-  try {
-    // Récupération des données de l'utilisateur donné
-    const [userRows] = await this.pool.query<mysql.RowDataPacket[]>(userQuery, [userId]);
-
-    if (userRows.length !== 1) {
-      throw new ForbiddenException("Utilisateur introuvable");
+    try {
+      const [rows] = await this.pool.query<mysql.RowDataPacket[]>(query, [
+        userId,
+      ]);
+      console.log(rows[0]);
+      return rows.length > 0 ? rows[0] : null;
+    } catch (err) {
+      console.error(
+        'Erreur lors de la recherche du user par ID: ',
+        userId,
+        err,
+      );
+      return null;
     }
-    const userPosition = userRows[0].position;
-    const userMaxDist = userRows[0].distanceMax; 
+  }
 
+  async findUsersWithinDistance(user: mysql.RowDataPacket) {
+    try {
+      if (!user || !user.position || !user.distanceMax)
+        throw new ForbiddenException("L'utilisateur n'existe pas");
+      const userPosition = user.position;
+      const userMaxDist = user.distanceMax;
 
-    // Requete pour rechercher toutes les données des autres utilisateurs
-    const allUsersQuery = `
+      // Requete pour rechercher toutes les données des autres utilisateurs
+      const allUsersQuery = `
       SELECT *
-      FROM SearchParam
-      WHERE userId != ?
+      FROM User
+      WHERE id != ?
     `;
 
-    // Récupération de toutes les données des autres utilisateurs
-    const [allUsersRows] = await this.pool.query<mysql.RowDataPacket[]>(allUsersQuery, [userId]);
+      // Récupération de toutes les données des autres utilisateurs
+      const [allUsersRows] = await this.pool.query<mysql.RowDataPacket[]>(
+        allUsersQuery,
+        [user.userId],
+      );
 
-    // Tableau pour stocker les utilisateurs à proximité
-    const usersWithinDistance = [];
+      // Tableau pour stocker les utilisateurs à proximité
+      const usersWithinDistance = [];
 
-    // Comparaison de la distance entre l'utilisateur donné et tous les autres utilisateurs
-    for (const otherUserRow of allUsersRows) {
-      const otherUserPosition = otherUserRow.position;
-      // Calcul de la distance entre l'utilisateur donné et l'autre utilisateur
-      const distance = this.calculateDistance(userPosition.lat, userPosition.lon, otherUserPosition.lat, otherUserPosition.lon);
-      // Si la distance est inf ou egale à la maxDist de la cible, ajouter l'utilisateur à la liste
-      if (distance <= userMaxDist) {
-        usersWithinDistance.push(otherUserRow);
+      // Comparaison de la distance entre l'utilisateur donné et tous les autres utilisateurs
+      for (const otherUserRow of allUsersRows) {
+        const otherUserPosition = otherUserRow.position;
+        // Calcul de la distance entre l'utilisateur donné et l'autre utilisateur
+        const distance = this.calculateDistance(
+          userPosition.lat,
+          userPosition.lon,
+          otherUserPosition.lat,
+          otherUserPosition.lon,
+        );
+        // Si la distance est inf ou egale à la maxDist de la cible, ajouter l'utilisateur à la liste
+        if (distance <= userMaxDist) {
+          usersWithinDistance.push(otherUserRow);
+        }
       }
+      return usersWithinDistance;
+    } catch (e) {
+      console.error(e);
+      throw new ForbiddenException(
+        'erreur lors de la recherche des utilisateurs par distance',
+      );
     }
-    return usersWithinDistance;
-  } catch (e) {
-    console.error(e);
-    throw new ForbiddenException("erreur lors de la recherche des utilisateurs par distance");
   }
-}
 
+  sortArrayByFame(arrayOfUser:mysql.RowDataPacket[]){
+    arrayOfUser.sort((a, b) => a.fame - b.fame)
+    return arrayOfUser;
+  }
+
+  // Supprime les users du tableau si ils n'ont pas le genre que l'utilisateur recherche
+  findUserWithinPref(
+    user: mysql.RowDataPacket,
+    arrayOfUser: mysql.RowDataPacket[],
+  ) {
+    return arrayOfUser.filter(
+      (otherUserRow) => otherUserRow.myGender in user.l4Gender,
+    );
+  }
+
+  findUserWithinAge(
+        user: mysql.RowDataPacket,
+    arrayOfUser: mysql.RowDataPacket[],
+  ) {
+    for (const otherUserRow of arrayOfUser) {
+      const age = this.userService.convertBirthdayInAge(otherUserRow.birthdate)
+      if ( age < user.ageMin || age > user.ageMax)
+            arrayOfUser.splice(arrayOfUser.indexOf(otherUserRow), 1);
+    }
+    return arrayOfUser;
+  }
+
+
+  // L'algo de trie des utilisateurs en fonction des info du user "chercheur" dans la table SearchParam
+  async searchAlgorythm(userId:number) {
+    try {
+      const UserFromSearchParamTable = await this.findUserById(userId);
+      let arrayOfUsers = await this.findUsersWithinDistance(UserFromSearchParamTable);
+      const userFromUserTable = await this.userService.findUserById(userId)
+      arrayOfUsers = this.findUserWithinPref(userFromUserTable, arrayOfUsers);
+      arrayOfUsers = this.findUserWithinAge(UserFromSearchParamTable, arrayOfUsers);
+      arrayOfUsers = this.sortArrayByFame(arrayOfUsers);
+      return arrayOfUsers;
+    }
+    catch(e){
+      console.error(e);
+      return null;
+    }
+  }
 }
