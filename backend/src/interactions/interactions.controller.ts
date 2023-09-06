@@ -16,7 +16,7 @@ export class InteractionController {
 
   @Get('match')
   @HttpCode(HttpStatus.OK)
-  async isItAMatch(@GetCurrentUserId() userId: number, @Query('id') viewedId) {
+  async isItAMatch(@GetCurrentUserId() userId: number, @Query('id') viewedId:number) {
     return await this.interactionService.isItAMatch(userId, viewedId);
   }
 

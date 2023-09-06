@@ -24,6 +24,7 @@ export class InteractionService {
   }
 
   async addInteraction(userId: number, viewedId: number, liked: boolean) {
+    try {
     if (
       this.validation.checkId(userId) > 0 ||
       this.validation.checkId(viewedId) > 0 ||
@@ -34,14 +35,15 @@ export class InteractionService {
       INSERT INTO Interaction (viewerUserId, viewedUserId, likeStatus)
       VALUES (?, ?, ?)
     `;
-    try {
       await this.pool.query(insertDataQuery, [userId, viewedId, liked]);
+      return await this.isItAMatch(userId, viewedId);
     } catch (err) {
       throw new BadRequestException("Erreur lors de l'insertion des données");
     }
   }
 
   async isItAMatch(userId: number, viewedId: number): Promise<boolean> {
+    try {
     if (
       this.validation.checkId(userId) > 0 ||
       this.validation.checkId(viewedId) > 0
@@ -54,7 +56,6 @@ export class InteractionService {
     AND viewedUserId = ?
   `;
 
-    try {
       const [rows] = await this.pool.query<mysql.RowDataPacket[]>(query, [
         userId,
         viewedId,

@@ -312,6 +312,8 @@ export class SearchService {
     return arrayOfUser;
   }
 
+  
+
   // L'algo de trie des utilisateurs en fonction des info du user "chercheur" dans la table SearchParam
   async searchAlgorythm(userId: number) {
     try {

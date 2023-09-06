@@ -77,17 +77,33 @@ body {
 }
 
 .next_button {
+  border: none;
   width: 60px;
   height: 40px;
   margin-right: 20px;
   cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.next_button:hover {
+  background-color: rgb(255, 64, 220);
+  border-radius: 10px;
+  color: #ffffff;
 }
 
 .back_button {
+  border: none;
   width: 60px;
   height: 40px;
   margin-left: 20px;
   cursor: pointer;
+}
+
+.back_button:hover {
+  background-color: rgb(255, 64, 220);
+  transition: all 0.3s ease-in-out;
+  border-radius: 10px;
+  color:#ffffff;
 }
 
 .button_box {
@@ -198,9 +214,10 @@ input[type="checkbox"].gender_input:checked + label {
   justify-content: center;
   margin-left: 0.8%;
   margin-right: 0.8%;
+  transition: all 0.3s ease-in-out;
 }
 
-.upload_button:hover span {
+.upload_button:hover{
   color: rgb(255, 64, 220);
 }
 
@@ -237,6 +254,7 @@ input[type="checkbox"].gender_input:checked + label {
   color: #fff;
   z-index: 1;
   pointer-events: auto;
+  transition: all 0.3s ease-in-out;
 }
 
 .clear_button:hover{
@@ -358,4 +376,61 @@ input[type="range"] {
   
 .rangeSlider {
   font-size: 16px; /* default size */
+}
+
+.disclaimer{
+  margin-top: 5%;
+  font-size: 16px;
+}
+
+.skip_button{
+  height: 30px;
+  width: 150px;
+  background-color:#fff;
+  color:#6c757d;
+  border: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.skip_button:hover{
+  border-radius: 10px;
+  color: rgb(255, 64, 220);
+  background-color: rgba(255, 64, 220, 0.3);
+  
+}
+
+.disclaimer_button {
+  width: 300px;
+  height: 30px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.disclaimer_button:hover {
+  border-radius: 10px;
+  color: rgb(255, 64, 220);
+  background-color: rgba(255, 64, 220, 0.3);
+}
+
+.start_button {
+  border: none;
+  width: 50%;
+  height: 40px;
+  margin-right: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  background-color: rgb(255, 64, 220);
+  border-radius: 10px;
+  color: #ffffff;
+}
+
+.start_box{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

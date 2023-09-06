@@ -3,7 +3,6 @@
   import { retry } from "../../../utils/utils";
   import { goto } from "$app/navigation";
 
-
   let counter: number = 0;
   let selectedGender: string = "";
   let selectedPref: string[] = []; // Un tableau pour stocker les genres sélectionnés
@@ -13,6 +12,7 @@
   let bio = "";
   let distance: number = 50;
   let ages: number[] = [20, 40];
+
   function counterUp() {
     console.log(counter);
     counter += 1;
@@ -20,6 +20,10 @@
 
   function counterDown() {
     if (counter > 0) counter -= 1;
+  }
+
+  function skip() {
+    counter = -5;
   }
 
   function toggleSexPref(gender: string) {
@@ -66,21 +70,23 @@
 
   async function sendUserData() {
     try {
-      console.log("je suis dans la fonction")
-    if (selectedGender && selectedGender.length) {
+      console.log("je suis dans la fonction");
+      if (selectedGender && selectedGender.length) {
         console.log("fecthing");
-        const response = await fetch(`http://localhost:3000/user/update/gender`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ gender: selectedGender }),
-        });
-        if (response.status === 401)
-          return await retry(sendUserData, null);
+        const response = await fetch(
+          `http://localhost:3000/user/update/gender`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ gender: selectedGender }),
+          }
+        );
+        if (response.status === 401) return await retry(sendUserData, null);
       }
-    if (selectedPref && selectedPref.length) {
+      if (selectedPref && selectedPref.length) {
         console.log("fecthing");
         const response = await fetch(`http://localhost:3000/user/update/pref`, {
           method: "POST",
@@ -90,23 +96,24 @@
           },
           body: JSON.stringify({ pref: selectedPref }),
         });
-        if (response.status === 401)
-          await retry(sendUserData, null);
-      } 
-    if (birthdate && birthdate.length) {
+        if (response.status === 401) await retry(sendUserData, null);
+      }
+      if (birthdate && birthdate.length) {
         console.log("fecthing");
-        const response = await fetch(`http://localhost:3000/user/update/birthdate`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ birthdate: birthdate }),
-        });
-        if (response.status === 401) 
-          return await retry(sendUserData, null);
-      } 
-    if (uploadedImages && uploadedImages[0]) {
+        const response = await fetch(
+          `http://localhost:3000/user/update/birthdate`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ birthdate: birthdate }),
+          }
+        );
+        if (response.status === 401) return await retry(sendUserData, null);
+      }
+      if (uploadedImages && uploadedImages[0]) {
         console.log("fecthing");
         const response = await fetch(`http://localhost:3000/picture/upload`, {
           method: "POST",
@@ -116,10 +123,9 @@
           },
           body: JSON.stringify({ selectedGender: selectedGender }),
         });
-         if (response.status === 401)
-          return await retry(sendUserData, null);
-    }
-    if (bio && bio.length) {
+        if (response.status === 401) return await retry(sendUserData, null);
+      }
+      if (bio && bio.length) {
         console.log("fecthing");
         const response = await fetch(`http://localhost:3000/user/update/bio`, {
           method: "POST",
@@ -129,16 +135,46 @@
           },
           body: JSON.stringify({ bio: bio }),
         });
-         if (response.status === 401)
-          return await retry(sendUserData, null);
+        if (response.status === 401) return await retry(sendUserData, null);
       }
-      goto('/profile');
-    }
-      catch (err) {
-        console.error(err);
+      if (ages) {
+        const response = await fetch(`http://localhost:3000/search/minAge`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ age: ages[0] }),
+        });
+        if (response.status === 401) return await retry(sendUserData, null);
       }
+      if (ages && ages[1]) {
+        const response = await fetch(`http://localhost:3000/search/maxAge`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ age: ages[1] }),
+        });
+        if (response.status === 401) return await retry(sendUserData, null);
+      }
+      if (distance) {
+        const response = await fetch(`http://localhost:3000/search/distance`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ distance: distance }),
+        });
+        if (response.status === 401) return await retry(sendUserData, null);
+      }
+      location.href = '/profile'
+    } catch (err) {
+      console.error(err);
     }
-  
+  }
 </script>
 
 <html lang="en">
@@ -350,21 +386,50 @@
             </div>
           {/if}
           {#if counter === 5}
-            <button on:click={() => sendUserData()}> Get started !</button>
+            <div class="start_box">
+              <button class="start_button" on:click={() => sendUserData()}>
+                Get started !</button
+              >
+            </div>
+          {/if}
+          {#if counter === -5}
+            <div>
+              <p class="disclaimer">
+                If you choose to ignore those steps, you won't appear to other
+                users and won't be able to take full advantage of the
+                application's services.
+              </p>
+              <p class="disclaimer">Are you sure you want to continue?</p>
+              <button
+                class="disclaimer_button"
+                on:click={() => location.href = '/profile'}
+                >Yes, I want to stay single</button
+              >
+              <button class="disclaimer_button" on:click={() => (counter = 0)}
+                >No, let me complete my profile</button
+              >
+            </div>
           {/if}
         </div>
-        <div class="button_box">
-          {#if counter === 0}
-            <button class="back_button" style="visibility: hidden;">Back</button
-            >
-          {:else}
-            <button class="back_button" on:click={counterDown}>Back</button>
-          {/if}
-
-          {#if bio.length <= 300 && counter < 5}
-            <button class="next_button" on:click={counterUp}>Next</button>
-          {/if}
-        </div>
+        {#if counter >= 0}
+          <div class="button_box">
+            {#if counter === 0}
+              <button class="back_button" style="visibility: hidden;"
+                >Back</button
+              >
+            {:else}
+              <button class="back_button" on:click={counterDown}>Back</button>
+            {/if}
+            {#if counter < 5}
+              <button class="skip_button" on:click={skip}
+                >Skip those steps</button
+              >
+            {/if}
+            {#if bio.length <= 300 && counter < 5}
+              <button class="next_button" on:click={counterUp}>Next</button>
+            {/if}
+          </div>
+        {/if}
       </div>
     </div></body
   >
