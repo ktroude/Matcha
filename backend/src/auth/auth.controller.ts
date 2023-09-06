@@ -7,10 +7,11 @@ import {
   HttpStatus,
   UseGuards,
   ForbiddenException,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalSignInDto, LocalSignUpDto } from './dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { RefreshTokenGuard } from './common/guards';
 import { GetCurrentUser, GetCurrentUserId, Public } from './common/decorators';
 
@@ -21,53 +22,64 @@ export class AuthController {
   @Public()
   @Post('local/signup')
   @HttpCode(HttpStatus.CREATED)
-  async signUpLocal(@Body() dto: LocalSignUpDto, @Res() res) {
-    const tokens = await this.authService.signUpLocal(dto);
-    if (tokens) {
-      res.cookie('access_token', tokens.access_token, {
-        httpOnly: true,
-      });
-      res.cookie('refresh_token', tokens.refresh_token, {
-        httpOnly: true,
-      });
-      res.status(HttpStatus.OK).json({ message: 'Connexion réussie' });
-    } else
-      res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: 'Échec de la connexion' });
+  async signUpLocal(@Body() dto: LocalSignUpDto, @Res() res:Response) {
+    try {
+      const tokens = await this.authService.signUpLocal(dto);
+      if (tokens) {
+        res.cookie('access_token', tokens.access_token, {
+          httpOnly: true,
+        });
+        res.cookie('refresh_token', tokens.refresh_token, {
+          httpOnly: true,
+        });
+        res.status(HttpStatus.OK).json({ message: 'Connexion réussie' });
+      } else
+        res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: 'Échec de la connexion' });
+    } catch {
+      throw new ForbiddenException('Connexion Refusée');
+    }
   }
 
-    @Post('validate/mail')
-    @HttpCode(HttpStatus.OK)
-    async getUserData(@GetCurrentUserId() userId: number, @Body('token') token: string, @Res() res) {
-      console.log("I'm in!");
-      console.log(userId);
-      //check du refresh token et de l'id pour valider
-      //pb avec le back, l'id ne correspond pas (84 pour le user, 88 pour la db -> impossible de trouver dans la db donc crash)
+  @Post('validate/mail')
+  @HttpCode(HttpStatus.OK)
+  async getUserData(
+    @GetCurrentUserId() userId: number,
+    @Body('token') token: string,
+    @Res() res: Response,
+  ) {
+    try {
       const validation = await this.authService.checkUserToken(userId, token);
       if (validation == true)
         return res.status(HttpStatus.OK).json({ message: 'Connexion réussie' });
-      console.log("failed to authenticate account");
       return res
-      .status(HttpStatus.UNAUTHORIZED)
-      .json({ message: 'Échec de la connexion' });
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({ message: 'Échec de la connexion' });
+    } catch {
+      throw new ForbiddenException('Connexion Refusée');
     }
+  }
 
   @Public()
   @Post('local/signin')
   @HttpCode(HttpStatus.OK)
   async signInLocal(@Body() dto: LocalSignInDto, @Res() res: Response) {
-    const tokens = await this.authService.signInLocal(dto);
-    if (tokens) {
-      res.cookie('access_token', tokens.access_token, {
-        httpOnly: true,
-      });
-      res.cookie('refresh_token', tokens.refresh_token, {
-        httpOnly: true,
-      });
-      res.end();
-    } else throw new ForbiddenException('Connexion Refusée et ouais frr');
-    return null;
+    try {
+      const tokens = await this.authService.signInLocal(dto);
+      if (tokens) {
+        res.cookie('access_token', tokens.access_token, {
+          httpOnly: true,
+        });
+        res.cookie('refresh_token', tokens.refresh_token, {
+          httpOnly: true,
+        });
+        res.end();
+      } else throw new ForbiddenException('Connexion Refusée');
+      return null;
+    } catch {
+      throw new ForbiddenException('Connexion Refusée');
+    }
   }
 
   @Post('logout')
@@ -76,13 +88,28 @@ export class AuthController {
     return this.authService.logout(userId);
   }
 
+  @Public()
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  refreshToken(
+  async refreshToken(
     @GetCurrentUserId() userId: number,
-    @GetCurrentUser('refreshToken') refreshToken: string,
+    @Req() req: Request,
+    @Res() res: Response,
   ) {
-    return this.authService.refreshToken(userId, refreshToken);
+    if (req && req.cookies && req.cookies['refresh_token']) {
+      const refreshToken = req.cookies['refresh_token'];
+      const tokens = await this.authService.refreshToken(userId, refreshToken);
+      if (tokens) {
+        res.cookie('access_token', tokens.access_token, {
+          httpOnly: true,
+        });
+        res.cookie('refresh_token', tokens.refresh_token, {
+          httpOnly: true,
+        });
+        res.end();
+      } else throw new ForbiddenException('Connexion Refusée');
+      return null;
+    }
   }
 }

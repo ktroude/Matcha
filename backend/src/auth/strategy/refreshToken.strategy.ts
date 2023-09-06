@@ -1,24 +1,27 @@
-import { Injectable } from "@nestjs/common";
-import { PassportStrategy } from "@nestjs/passport";
-import { Request } from "express";
-import { ExtractJwt, Strategy } from "passport-jwt";
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy } from 'passport-jwt';
+import { Request } from 'express';
 
 @Injectable()
-export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
-    constructor() {
-        super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),   // comment recuperer le token --> sous la forme d'un bearer token
-            ignoreExpiration: false,
-            passReqToCallback: true,
-            secretOrKey: 'secret a mettre en .env different de access_token è_é'
-        });
-    }
+export class RefreshTokenStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
+  constructor() {
+    super({
+      jwtFromRequest: (req: Request) => {
+        if (req && req.cookies && req.cookies['refresh_token']) {
+          return req.cookies['refresh_token'];
+        }
+        return null;
+      },
+      ignoreExpiration: false,
+      secretOrKey: 'le secret du RT dans le .env',
+    });
+  }
 
-    validate(req:Request, payload:any) {
-        const refreshToken = req.get('authorization').replace('Bearer', '').trim(); 
-        return {
-            ...payload,
-            refreshToken,
-        };
-    }
+  validate(payload: any) {
+    return payload;
+  }
 }

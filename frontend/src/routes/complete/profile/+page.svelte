@@ -1,4 +1,9 @@
 <script lang="ts">
+  import RangeSlider from "svelte-range-slider-pips"; // https://simeydotme.github.io/svelte-range-slider-pips/en/introduction/
+  import { retry } from "../../../utils/utils";
+  import { goto } from "$app/navigation";
+
+
   let counter: number = 0;
   let selectedGender: string = "";
   let selectedPref: string[] = []; // Un tableau pour stocker les genres sélectionnés
@@ -6,7 +11,8 @@
   let uploadedImages = new Array(5).fill(null); // Tableau pour stocker les images
   let currentImageIndex = 0; // Index de l'image en cours d'upload
   let bio = "";
-
+  let distance: number = 50;
+  let ages: number[] = [20, 40];
   function counterUp() {
     console.log(counter);
     counter += 1;
@@ -54,16 +60,16 @@
   }
 
   function clearUploadedImages() {
-    for (let i=0; i<uploadedImages.length; i++)
-    uploadedImages[i] = null;
-  currentImageIndex = 0;
-}
+    for (let i = 0; i < uploadedImages.length; i++) uploadedImages[i] = null;
+    currentImageIndex = 0;
+  }
 
   async function sendUserData() {
+    try {
+      console.log("je suis dans la fonction")
     if (selectedGender && selectedGender.length) {
-      try {
         console.log("fecthing");
-        await fetch(`http://localhost:3000/user/update/gender`, {
+        const response = await fetch(`http://localhost:3000/user/update/gender`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -71,14 +77,12 @@
           },
           body: JSON.stringify({ gender: selectedGender }),
         });
-      } catch (err) {
-        console.error(err);
+        if (response.status === 401)
+          return await retry(sendUserData, null);
       }
-    }
     if (selectedPref && selectedPref.length) {
-      try {
         console.log("fecthing");
-        await fetch(`http://localhost:3000/user/update/pref`, {
+        const response = await fetch(`http://localhost:3000/user/update/pref`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -86,14 +90,12 @@
           },
           body: JSON.stringify({ pref: selectedPref }),
         });
-      } catch (err) {
-        console.error(err);
-      }
-    }
+        if (response.status === 401)
+          await retry(sendUserData, null);
+      } 
     if (birthdate && birthdate.length) {
-      try {
         console.log("fecthing");
-        await fetch(`http://localhost:3000/user/update/birthdate`, {
+        const response = await fetch(`http://localhost:3000/user/update/birthdate`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -101,14 +103,12 @@
           },
           body: JSON.stringify({ birthdate: birthdate }),
         });
-      } catch (err) {
-        console.error(err);
-      }
-    }
+        if (response.status === 401) 
+          return await retry(sendUserData, null);
+      } 
     if (uploadedImages && uploadedImages[0]) {
-      try {
         console.log("fecthing");
-        await fetch(`http://localhost:3000/picture/upload`, {
+        const response = await fetch(`http://localhost:3000/picture/upload`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -116,14 +116,12 @@
           },
           body: JSON.stringify({ selectedGender: selectedGender }),
         });
-      } catch (err) {
-        console.error(err);
-      }
+         if (response.status === 401)
+          return await retry(sendUserData, null);
     }
     if (bio && bio.length) {
-      try {
         console.log("fecthing");
-        await fetch(`http://localhost:3000/user/update/bio`, {
+        const response = await fetch(`http://localhost:3000/user/update/bio`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -131,11 +129,16 @@
           },
           body: JSON.stringify({ bio: bio }),
         });
-      } catch (err) {
+         if (response.status === 401)
+          return await retry(sendUserData, null);
+      }
+      goto('/profile');
+    }
+      catch (err) {
         console.error(err);
       }
     }
-  }
+  
 </script>
 
 <html lang="en">
@@ -153,6 +156,13 @@
       href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Righteous&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.4.0/nouislider.min.css"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.4.0/nouislider.min.js"
+    ></script>
   </head>
   <title>Matcha</title>
   <body>
@@ -254,7 +264,7 @@
           {#if counter === 2}
             <div class="box_title_picture">Upload some pictures</div>
             <div class="select_profile_picture">
-             <p>&#x1F451; </p>
+              <p>&#x1F451;</p>
               <p>Profile Picture</p>
             </div>
             <div class="picture_box">
@@ -274,7 +284,9 @@
                 {/if}
               {/each}
             </div>
-            <button class="clear_button" on:click={clearUploadedImages}>Clear pictures</button>
+            <button class="clear_button" on:click={clearUploadedImages}
+              >Clear pictures</button
+            >
           {/if}
           {#if counter === 3}
             <div class="box_title">
@@ -300,11 +312,45 @@
             </div>
           {/if}
           {#if counter === 4}
-            <div class="box_title">I'm looking for people from</div>
-            <div class="search_box" />
+            <div class="box_title">I'm looking for people:</div>
+            <div class="search_box">
+              <div class="distance_slider">
+                <span>
+                  within maximum {distance} km from me
+                </span>
+                <RangeSlider
+                  class="distance_input"
+                  min={5}
+                  max={150}
+                  pips
+                  all={false}
+                  first="label"
+                  last="label"
+                  rest={false}
+                  bind:values={distance}
+                />
+              </div>
+
+              <div class="age_slider">
+                <span>
+                  between {ages[0]} and {ages[1]} years old
+                </span>
+                <RangeSlider
+                  min={18}
+                  max={80}
+                  range
+                  pips
+                  all={false}
+                  first="label"
+                  last="label"
+                  rest={false}
+                  bind:values={ages}
+                />
+              </div>
+            </div>
           {/if}
           {#if counter === 5}
-            <button> Get started !</button>
+            <button on:click={() => sendUserData()}> Get started !</button>
           {/if}
         </div>
         <div class="button_box">

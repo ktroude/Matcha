@@ -11,21 +11,16 @@ export class AuthService {
   constructor(private jwt: JwtService, private userService: UserService) {}
 
   async signInLocal(dto: LocalSignInDto): Promise<Tokens | null> {
-    console.log("les dto == ", dto);
     const user = await this.userService.findUserByUsername(dto.username);
-    console.log("user ==", user);
     if (!user) return null; // mauvais pseudo
     const passwordMatches = await bcrypt.compare(dto.password, user.password);
-    console.log("match == ", passwordMatches)
     if (passwordMatches === false) return null; // mauvais mot de passe
     let token = await this.getTokens(user.id, user.email);
     token.refresh_token = await this.updateRefreshToken(user.id, token.refresh_token);
-    console.log
     return token;
   }
 
   async sendMail(usermail: string, token: string) {
-    console.log("sending mail to:", usermail);
     const transporter = nodemailer.createTransport({
       service: "gmail",
       secure: true,
@@ -78,8 +73,9 @@ export class AuthService {
 
   async refreshToken(userId: number, refreshToken: string) {
     const user = await this.userService.findUserById(userId);
-    if (!user || !user.refresh_token)
+    if (!user || !user.refresh_token) { 
       throw new ForbiddenException('Connexion Refusée');
+    }
     const refreshTokenMatches = await bcrypt.compare(
       refreshToken,
       user.refresh_token,
@@ -87,13 +83,12 @@ export class AuthService {
     if (refreshTokenMatches === false)
       throw new ForbiddenException('Connexion Refusée');
     let token = await this.getTokens(user.id, user.email);
-    token.refresh_token = await this.updateRefreshToken(user.id, token.refresh_token);
+    await this.updateRefreshToken(user.id, token.refresh_token);
     return token;
   }
 
   async checkUserToken(userId: number, refreshToken: string) {
     const user = await this.userService.findUserById(userId);
-    console.log("user:", user);
     if (!user || !user.refresh_token)
       throw new ForbiddenException('Connexion Refusée');
     if (refreshToken !== user.refresh_token)
@@ -122,7 +117,7 @@ export class AuthService {
         },
         {
           secret: 'secret a mettre en .env',
-          expiresIn: 60 * 15, // timer en sec donc ici 15 min
+          expiresIn: 60 * 15, // Timer en sec donc ici 15 min
         },
       ),
       this.jwt.signAsync(
@@ -132,7 +127,7 @@ export class AuthService {
         },
         {
           secret: 'le secret du RT dans le .env',
-          expiresIn: 60 * 60 * 24 * 7, // timer set sur une semaine
+          expiresIn: 60 * 60 * 24 * 7, // Timer set sur une semaine
         },
       ),
     ]);

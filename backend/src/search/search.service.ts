@@ -2,7 +2,6 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
 import { SearchValidation } from './search.validation.service';
 import axios from 'axios';
-import * as math from 'mathjs';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()

@@ -275,3 +275,87 @@ input[type="checkbox"].gender_input:checked + label {
   resize: none;
 }
 
+.distance-slider {
+  display: flex;
+  flex-direction:column;
+  align-items: center;
+  margin: 20px;
+}
+
+.dist_label{
+ font-size: 16px;
+}
+
+input[type="range"] {
+  width: 50%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  border-radius: 5px;
+  outline: none;
+  margin-top: 10px;
+  background: #6c757d; 
+
+}
+
+  input[type="range"] {
+    width: 50%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 10px;
+    border-radius: 5px;
+    outline: none;
+    margin-top: 10px;
+    background: linear-gradient(to right, rgba(255, 64, 220, 0.3) 0%, #6c757d 0%, #6c757d 100%);
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: rgb(255, 255, 255);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+ 
+.search_box{
+  gap: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+
+.distance_slider{
+  margin-top: 5%;
+  width: 70%;
+}
+
+.age_slider{
+  width: 70%;
+}
+
+  :root {
+    --range-slider:            #6c757d;
+    --range-handle-inactive:   #ffffff;
+    --range-handle:            hsl(0, 0%, 100%);
+    --range-handle-focus:      hsl(0, 0%, 100%);
+    --range-handle-border:     hsl(0, 0%, 100%);
+    --range-range-inactive:    rgb(255, 64, 220);
+    --range-range:             rgb(255, 64, 220);
+
+    --range-pip:               hsl(0, 0%, 100%);
+    --range-pip-text:          hsl(0, 0%, 100%);
+    --range-pip-active:        hsl(0, 0%, 100%);
+    --range-pip-active-text:   hsl(0, 0%, 100%);
+    --range-pip-hover:         hsl(0, 0%, 100%);
+    --range-pip-hover-text:    hsl(0, 0%, 100%);
+    --range-pip-in-range:      hsl(0, 0%, 100%);
+    --range-pip-in-range-text: hsl(0, 0%, 100%);
+  }
+  
+.rangeSlider {
+  font-size: 16px; /* default size */
+}
