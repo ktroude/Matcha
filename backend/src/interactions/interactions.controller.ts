@@ -16,7 +16,10 @@ export class InteractionController {
 
   @Get('match')
   @HttpCode(HttpStatus.OK)
-  async isItAMatch(@GetCurrentUserId() userId: number, @Query('id') viewedId:number) {
+  async isItAMatch(
+    @GetCurrentUserId() userId: number,
+    @Query('id') viewedId: number,
+  ) {
     return await this.interactionService.isItAMatch(userId, viewedId);
   }
 
@@ -36,28 +39,37 @@ export class InteractionController {
 
   @Get('liked')
   @HttpCode(HttpStatus.OK)
-  async getLiked(@GetCurrentUserId() userId:number) {
+  async getLiked(@GetCurrentUserId() userId: number) {
     const liked = await this.interactionService.getLiked(userId);
     return await this.interactionService.checkBlocked(userId, liked);
   }
 
-    @Get('viewed')
+  @Get('viewed')
   @HttpCode(HttpStatus.OK)
-  async getViewed(@GetCurrentUserId() userId:number) {
+  async getViewed(@GetCurrentUserId() userId: number) {
     const liked = await this.interactionService.getviewed(userId);
     return await this.interactionService.checkBlocked(userId, liked);
   }
 
   @Get('dislike')
   @HttpCode(HttpStatus.OK)
-  async getDislike(@GetCurrentUserId() userId:number) {
+  async getDislike(@GetCurrentUserId() userId: number) {
     const liked = await this.interactionService.getDisliked(userId);
     return await this.interactionService.checkBlocked(userId, liked);
   }
 
   @Get('viewed')
   @HttpCode(HttpStatus.OK)
-  async getBlocked(@GetCurrentUserId() userId:number) {
+  async getBlocked(@GetCurrentUserId() userId: number) {
     return await this.interactionService.getBlocked(userId);
+  }
+
+  @Post('block')
+  @HttpCode(HttpStatus.OK)
+  async newBlock(
+    @GetCurrentUserId() userId: number,
+    @Body('block') blockedId: number,
+  ) {
+    return await this.interactionService.addBlock(userId, blockedId);
   }
 }

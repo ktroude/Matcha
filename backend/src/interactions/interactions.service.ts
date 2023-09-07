@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -25,6 +26,24 @@ export class InteractionService {
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
     });
+  }
+
+  // 1 pour les personne blockées, 0 sinon
+  async addBlock(userId:number, viewedId:number){
+    try{
+
+      const insertDataQuery = `
+      INSERT INTO Interaction (viewerUserId, viewedUserId)
+      VALUES (?, ?)
+      `;
+      await this.pool.query(insertDataQuery, [
+        userId,
+        viewedId,
+        1,
+      ]);
+    } catch(err) {
+      throw new ForbiddenException('Connexion Refusée');
+    }
   }
 
   async addInteraction(
@@ -142,10 +161,12 @@ export class InteractionService {
       FROM Interaction
       WHERE viewedUserId = ?
       OR viewerUserId = ?
+      AND block = ?
       `;
     const [blocked] = await this.pool.query<mysql.RowDataPacket[]>(query, [
       userId,
       userId,
+      1,
     ]);
     const setOfVarAValues = new Set(blocked.map((item) => item.varA));
     const setOfVarBValues = new Set(blocked.map((item) => item.varB));
@@ -172,7 +193,7 @@ export class InteractionService {
       `;
       const [rows] = await this.pool.query<mysql.RowDataPacket[]>(query, [
         userId,
-        true,
+        1,
       ]);
       if (!rows || !rows[0]) return null;
       return rows;
