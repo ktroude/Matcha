@@ -102,7 +102,8 @@ CREATE TABLE IF NOT EXISTS Interaction (
     viewerUserId  INT,
     viewedUserId  INT,
     likeStatus    BOOLEAN,
-    timestamp     DATETIME
+    timestamp     DATETIME,
+    block         INT,
 );
    `;
 

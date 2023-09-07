@@ -33,4 +33,31 @@ export class InteractionController {
       liked,
     );
   }
+
+  @Get('liked')
+  @HttpCode(HttpStatus.OK)
+  async getLiked(@GetCurrentUserId() userId:number) {
+    const liked = await this.interactionService.getLiked(userId);
+    return await this.interactionService.checkBlocked(userId, liked);
+  }
+
+    @Get('viewed')
+  @HttpCode(HttpStatus.OK)
+  async getViewed(@GetCurrentUserId() userId:number) {
+    const liked = await this.interactionService.getviewed(userId);
+    return await this.interactionService.checkBlocked(userId, liked);
+  }
+
+  @Get('dislike')
+  @HttpCode(HttpStatus.OK)
+  async getDislike(@GetCurrentUserId() userId:number) {
+    const liked = await this.interactionService.getDisliked(userId);
+    return await this.interactionService.checkBlocked(userId, liked);
+  }
+
+  @Get('viewed')
+  @HttpCode(HttpStatus.OK)
+  async getBlocked(@GetCurrentUserId() userId:number) {
+    return await this.interactionService.getBlocked(userId);
+  }
 }
