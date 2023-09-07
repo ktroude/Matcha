@@ -1,0 +1,130 @@
+.profile_box {
+  border-radius: 20px;
+  margin: auto;
+  width: 800px;
+  height: 600px;
+  background-color: rgba(22, 22, 22, 0.396);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  color: white;
+  font-size: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  box-shadow: rgba(255, 66, 233, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+  transition: border-radius 0.15s ease-in-out;
+}
+
+.profile_box_left {
+  width: 50%;
+  height: 100%;
+  text-align: center;
+}
+
+.profile_picture {
+  background-color: rgba(22, 22, 22, 0.396);
+  width: 350px;
+  height: 350px;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+}
+
+.profile_info {
+  margin-top: 5px;
+  font-size: 20px;
+}
+
+.profile_preferences {
+  font-size: 20px;
+  padding-left: 30px;
+  text-align: left;
+  margin-top: 35px;
+  margin-bottom: 35px;
+}
+
+.profile_online_status {
+  font-size: 20px;
+}
+
+.profile_box_right {
+  width: 50%;
+  height: 100%;
+  border-left: 1px solid rgba(22, 22, 22, 0.396);
+}
+
+.bio_title {
+  padding: 10px;
+  font-size: 22px;
+}
+
+.profile_bio {
+  padding: 10px;
+  font-size: 18px;
+  color: rgb(187, 187, 187);
+}
+
+.profile_buttons_box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile_button {
+  border-radius: 100%;
+  background-color: rgba(22, 22, 22, 0.396);
+  height: 50px;
+  width: 50px;
+}
+
+.like_profile_button {
+  border-radius: 100%;
+  background-color: transparent;
+  height: 50px;
+  width: 50px;
+  background-image: url("like.png");
+  background-position: center;
+  background-size: 100%;
+  border: none;
+  transition: background-size 0.1s ease-in-out;
+}
+.like_profile_button:hover {
+  cursor: pointer;
+  background-size: 110%;
+}
+
+.block_profile_button {
+  border-radius: 100%;
+  background-color: transparent;
+  height: 50px;
+  width: 50px;
+  background-image: url("block.png");
+  background-position: center;
+  background-size: 90%;
+  background-repeat: no-repeat;
+  border: none;
+  transition: background-size 0.1s ease-in-out;
+}
+.block_profile_button:hover {
+  cursor: pointer;
+  background-size: 100%;
+}
+
+.report_profile_button {
+  border-radius: 100%;
+  background-color: transparent;
+  height: 50px;
+  width: 50px;
+  background-image: url("report.png");
+  background-position: center;
+  background-size: 80%;
+  background-repeat: no-repeat;
+  border: none;
+  transition: scale 0.1s ease-in-out;
+}
+.report_profile_button:hover {
+  cursor: pointer;
+  scale: 1.2;
+}/*# sourceMappingURL=profile.css.map */
