@@ -4,6 +4,7 @@
 </svelte:head>
 
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,13 +26,11 @@
         <div class="title">matcha</div>
         <div class="subtitle">Savor the taste of <span style="color:rgb(242, 0, 255)">love</span> with Matcha! ♥</div>
     </div>
-
     <div class="login_box">
         <input class="input_login" type="text" placeholder="Username" bind:value={username}>
         <input class="input_login" type="text" placeholder="Password" bind:value={password}>
         <button on:click={connexion} class="login_button">Log in</button>
     </div>
-
 </body>
 
 </html>
@@ -39,8 +38,6 @@
 <script lang="ts">
 
 let password:string, username:string;
-
-
 
 async function connexion() {
 

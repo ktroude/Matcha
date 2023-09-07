@@ -38,18 +38,45 @@
             <div class="profile_online_status">Last online yesterday.</div>
         </div>
         <div class="profile_box_right">
-            <div class="bio_title">Biography</div>
-            <div class="profile_bio">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate ipsam itaque impedit ea, sequi quaerat delectus consequatur harum blanditiis, consequuntur et nisi? Provident, velit! Impedit sit repellat reiciendis enim tenetur!</div>
-            <div class="profile_buttons_box">
-                <button class="like_profile_button"></button>
-                <button class="block_profile_button"></button>
-                <button class="report_profile_button"></button>
+            <!---- If the user is browsing on its own profile-->
+            <div class="profile_box_right_nav">
+                <button class="button_box_right_nav" on:click={() => switch_to_bio()}>Bio</button>
+                <button class="button_box_right_nav" on:click={() => switch_to_viewed()}>Viewed</button>
+                <button class="button_box_right_nav" on:click={() => switch_to_liked()}>Liked</button>
+                <button class="button_box_right_nav" on:click={() => switch_to_unliked()}>Unliked</button>
+                <button class="button_box_right_nav" on:click={() => switch_to_blocked()}>Blocked</button>
             </div>
+            {#if box_nav == "bio"}
+            <div class="bio_box">
+                <div class="bio_title">About [name]</div>
+                <div class="profile_bio">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate ipsam itaque impedit ea, sequi quaerat delectus consequatur harum blanditiis, consequuntur et nisi? Provident, velit! Impedit sit repellat reiciendis enim tenetur!</div>
+            </div>
+            <!---- If the user is browsing on someone else's profile-->
+            <div class="profile_buttons_box">
+                <button class="like_profile_button">LIKE</button>
+                <button class="block_profile_button">BLOCK</button>
+                <button class="report_profile_button">REPORT</button>
+            </div>
+            {/if}
+            {#if box_nav == "viewed"}
+                <div class="viewed_user_box">
+                    <div class="viewed_user">
+                        <div class="viewed_user_picture"></div>
+                        <div class="viewed_user_info">Username Lastname, Age</div>
+                    </div>
+                    <div class="viewed_user">
+                        <div class="viewed_user_picture"></div>
+                        <div class="viewed_user_info">Testman Toto, 28</div>
+                    </div>
+                    <div class="viewed_user">
+                        <div class="viewed_user_picture"></div>
+                        <div class="viewed_user_info">Ancetres fiers, 42</div>
+                    </div>
+                </div>
+
+            {/if}
         </div>
-
     </div>
-
-
 </body>
 </html>
 
@@ -57,6 +84,7 @@
     import { onMount } from "svelte";
 
     let id:any;
+    let box_nav = "bio";
 
     async function getId() {
             const response = await fetch(`http://localhost:3000/user/me`, {
@@ -76,5 +104,21 @@
         await getId();
 	});
 
+
+    function switch_to_bio(){
+        box_nav = "bio";
+    }
+    function switch_to_viewed(){
+        box_nav = "viewed";
+    }
+    function switch_to_liked(){
+        box_nav = "liked";
+    }
+    function switch_to_blocked(){
+        box_nav = "blocked";
+    }
+    function switch_to_unliked(){
+        box_nav = "unliked";
+    }
 
 </script>

@@ -14,12 +14,14 @@
   justify-content: center;
   box-shadow: rgba(255, 66, 233, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
   transition: border-radius 0.15s ease-in-out;
+  overflow: hidden;
 }
 
 .profile_box_left {
   width: 50%;
   height: 100%;
   text-align: center;
+  overflow: hidden;
 }
 
 .profile_picture {
@@ -38,7 +40,7 @@
 }
 
 .profile_preferences {
-  font-size: 20px;
+  font-size: 16px;
   padding-left: 30px;
   text-align: left;
   margin-top: 35px;
@@ -46,15 +48,60 @@
 }
 
 .profile_online_status {
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .profile_box_right {
   width: 50%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   border-left: 1px solid rgba(22, 22, 22, 0.396);
+  overflow: hidden;
 }
 
+.profile_box_right_nav {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  height: 60px;
+  margin-top: 20px;
+  border-bottom: 1px solid yellow;
+}
+
+.button_box_right_nav {
+  border: none;
+  border-radius: 5px;
+  color: white;
+  height: 40px;
+  width: 70px;
+  background-color: rgba(22, 22, 22, 0.396);
+  padding: 3px;
+  font-size: 16px;
+  transition: scale 0.1s ease-in-out;
+}
+.button_box_right_nav:hover {
+  cursor: pointer;
+  scale: 1.1;
+  color: yellow;
+  text-decoration: underline;
+}
+
+.bio_box {
+  padding: 30px;
+  animation: appear_box 0.2s ease-in-out;
+}
+
+@keyframes appear_box {
+  0% {
+    transform: translateX(-500px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
 .bio_title {
   padding: 10px;
   font-size: 22px;
@@ -66,10 +113,59 @@
   color: rgb(187, 187, 187);
 }
 
+.viewed_user_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  animation: appear_box 0.2s ease-in-out;
+}
+
+@keyframes appear_box {
+  0% {
+    transform: translateX(-500px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+.viewed_user {
+  width: 80%;
+  background-color: rgba(22, 22, 22, 0.396);
+  height: 40px;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  border-radius: 5px;
+  margin: 3px;
+  transition: transform 0.1s ease-in-out;
+}
+.viewed_user:hover {
+  cursor: pointer;
+  transform: translateX(-10px);
+  color: yellow;
+}
+
+.viewed_user_picture {
+  height: 30px;
+  width: 30px;
+  background-color: rgba(22, 22, 22, 0.662);
+  border-radius: 100%;
+  margin-left: 10px;
+}
+
+.viewed_user_info {
+  font-size: 15px;
+  margin-left: 5px;
+}
+
 .profile_buttons_box {
+  margin-top: auto;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
 }
 
 .profile_button {
@@ -80,7 +176,7 @@
 }
 
 .like_profile_button {
-  border-radius: 100%;
+  border-radius: 50%;
   background-color: transparent;
   height: 50px;
   width: 50px;
@@ -89,10 +185,15 @@
   background-size: 100%;
   border: none;
   transition: background-size 0.1s ease-in-out;
+  transition: font-size 0.15s ease-in-out;
+  color: rgb(255, 0, 238);
+  scale: 1.5;
 }
 .like_profile_button:hover {
+  color: rgb(255, 104, 245);
   cursor: pointer;
-  background-size: 110%;
+  scale: 1.8;
+  font-size: 20px;
 }
 
 .block_profile_button {
@@ -105,11 +206,14 @@
   background-size: 90%;
   background-repeat: no-repeat;
   border: none;
-  transition: background-size 0.1s ease-in-out;
+  transition: scale 0.1s ease-in-out;
+  transition: font-size 0.15s ease-in-out;
+  color: red;
+  scale: 1.5;
 }
 .block_profile_button:hover {
   cursor: pointer;
-  background-size: 100%;
+  scale: 1.8;
 }
 
 .report_profile_button {
@@ -123,8 +227,10 @@
   background-repeat: no-repeat;
   border: none;
   transition: scale 0.1s ease-in-out;
+  color: yellow;
+  scale: 1.5;
 }
 .report_profile_button:hover {
   cursor: pointer;
-  scale: 1.2;
+  scale: 1.8;
 }/*# sourceMappingURL=profile.css.map */
